@@ -90,10 +90,17 @@
   [driver]
   (.activeElement (.switchTo driver)))
 
+(defn execute-script
+    "Version of execute-script that uses a WebDriver instance directly."
+      [^RemoteWebDriver webdriver js & js-args]
+        (.executeScript webdriver ^String js (into-array Object js-args)))
+
 (defn unfocus
   "unfocuses all elements"
   [driver]
-  (.sendKeys (get-element driver :tagName "body") (into-array CharSequence [""])))
+  (execute-script driver (str "var tmp = document.createElement('input');"
+                              "document.body.appendChild(tmp); tmp.focus();"
+                              "document.body.removeChild(tmp);")))
 
 (defn clear
   "clears webelement"
@@ -178,11 +185,6 @@
   
   ([driver lookup-type lookup-string attribute]
   (get-element-value driver (get-element driver lookup-type lookup-string) attribute)))
-
-(defn execute-script
-    "Version of execute-script that uses a WebDriver instance directly."
-      [^RemoteWebDriver webdriver js & js-args]
-        (.executeScript webdriver ^String js (into-array Object js-args)))
 
 (defn scroll-into-view!
   "Scrolls the given element into view"
