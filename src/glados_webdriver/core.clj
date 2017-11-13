@@ -18,6 +18,17 @@
   ([driver-type]
    (create-driver driver-type ["--headless"])))
 
+
+(defmacro with-driver
+  ([driver-type driver-args & body]
+  (list 'let (vector 'driver (list 'create-driver driver-type driver-args))
+        (list 'try (cons 'do body) '(catch Exception e (throw e)) '(finally (driver-quit driver))))))
+
+(defmacro with-all-drivers
+  [driver-args & body]
+  `(do (with-driver :chrome ~driver-args ~@body)
+       (with-driver :firefox ~driver-args ~@body)))
+
 (defn to
   "Navigates the driver to the given url"
   ([driver url] (. driver get url)))
@@ -26,14 +37,6 @@
   "calls quit on the driver"
   ([driver]
     (. driver quit)))
-
-(defn with-driver
-  "Passes driver into f; Closes driver on exception"
-  [driver f]
-  (try (f driver)
-       (catch Exception e
-         (driver-quit driver)
-         (throw e))))
 
 (defn get-elements
   "finds an element and returns WebElement"
