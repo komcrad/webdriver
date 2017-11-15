@@ -38,35 +38,37 @@
   ([driver]
     (. driver quit)))
 
+(defn by
+  [lookup-type lookup-string]
+  (cond
+    (= :id lookup-type)
+      (. org.openqa.selenium.By id lookup-string)
+    (= :name lookup-type)
+      (. org.openqa.selenium.By name lookup-string)
+    (= :linkText lookup-type)
+      (. org.openqa.selenium.By linkText lookup-string)
+    (= :className lookup-type)
+      (. org.openqa.selenium.By className lookup-string)
+    (= :xpath lookup-type)
+      (. org.openqa.selenium.By xpath lookup-string)
+    (= :text lookup-type)
+      (. org.openqa.selenium.By xpath
+       (str "//*[contains(text(), '" lookup-string "')]"))
+    (= :tagName lookup-type)
+      (. org.openqa.selenium.By tagName lookup-string)
+    :else (throw (Exception. (str "get-element has no option \"" lookup-type "\"")))))
+
 (defn get-elements
   "finds an element and returns WebElement"
   [driver lookup-type element-name]
   (if lookup-type
-    (cond
-      (= :id lookup-type)
-        (. driver findElements (. org.openqa.selenium.By id element-name))
-      (= :name lookup-type)
-        (. driver findElements (. org.openqa.selenium.By name element-name))
-      (= :linkText lookup-type)
-        (. driver findElements (. org.openqa.selenium.By linkText element-name))
-      (= :className lookup-type)
-        (. driver findElements (. org.openqa.selenium.By className element-name))
-      (= :xpath lookup-type)
-        (. driver findElements (. org.openqa.selenium.By xpath element-name))
-      (= :text lookup-type)
-        (. driver findElements (. org.openqa.selenium.By xpath
-                                (str "//*[contains(text(), '" element-name "')]")))
-      (= :tagName lookup-type)
-        (. driver findElements (. org.openqa.selenium.By tagName element-name))
-      :else (throw (Exception. (str "get-element has no option \"" lookup-type "\""))))
-    (try
-      (. driver findElements (. org.openqa.selenium.By name element-name))
-      (catch Exception e (throw (Exception. (str "could not find element " element-name)))))))
+    (. driver findElements (by lookup-type element-name))))
 
 (defn get-element
   "returns the first element matching lookup-string"
   ([driver lookup-type lookup-string]
-  (nth (get-elements driver lookup-type lookup-string) 0)))
+  (try (nth (get-elements driver lookup-type lookup-string) 0)
+       (catch Exception e nil))))
 
 (defn q
   "finds and returns webelement with name -> linkText -> id s"
@@ -118,19 +120,20 @@
 
 (defn wait-for-element
   "needs implementation"
-  [args])
+  ([driver lookup-type lookup-string max-wait]
+  (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
+     (. org.openqa.selenium.support.ui.ExpectedConditions elementToBeClickable (by lookup-type lookup-string))))
+  ([driver lookup-type lookup-string]
+   (wait-for-element driver lookup-type lookup-string 10)))
 
 (defn is-visible
-  ([driver element]
+  ([element]
   (try (and (.isEnabled element) (.isDisplayed element))
-    (catch Exception e false)))
+       (catch Exception e false)))
   
   ([driver lookup-type lookup-string]
-  (is-visible driver (get-element driver lookup-type lookup-string))))
-
-(defn wait-for-visible
-  "needs implementation"
-  [args])
+  (try (is-visible (get-element driver lookup-type lookup-string))
+       (catch Exception e false))))
   
 (defn input-text
   "sets the value of an input if clear, element will be cleared before
@@ -155,7 +158,7 @@
         selectByVisibleText s)
      e)
    (do
-     (clear e)
+     (clear driver e)
      (.sendKeys e (into-array CharSequence [s]))
      e)))
   ([driver lookup-type lookup-string s]
@@ -174,17 +177,17 @@
 
 (defn get-element-value
   "gets the value of an element"
-  ([driver webelement attribute]
+  ([webelement attribute]
   (cond
     (= attribute :text)
       (.getText webelement)
     (= attribute :value)
       (. webelement getAttribute "value")
     :else
-      (get-element-value driver webelement :value)))
+      (get-element-value webelement :value)))
   
   ([driver lookup-type lookup-string attribute]
-  (get-element-value driver (get-element driver lookup-type lookup-string) attribute)))
+  (get-element-value (get-element driver lookup-type lookup-string) attribute)))
 
 (defn scroll-into-view!
   "Scrolls the given element into view"
