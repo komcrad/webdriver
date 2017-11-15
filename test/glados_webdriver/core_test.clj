@@ -62,7 +62,7 @@
     ["--headless"]
     (to driver test-html-file-url)
     (click driver :id "btn1")
-    (is (= "Button 1" (get-element-value driver (focused-element driver) :text)))))
+    (is (= "Button 1" (get-element-value (focused-element driver) :text)))))
 
 (deftest ^:parallel unfocus-test                                     
     (testing "unfocus")                                                
@@ -71,4 +71,37 @@
         (to driver test-html-file-url)
         (click driver :id "btn1")
         (unfocus driver)
-        (is (not (= "Button 1" (get-element-value driver (focused-element driver) :text))))))
+        (is (not (= "Button 1" (get-element-value (focused-element driver) :text))))))
+
+(deftest ^:parallel clear-test
+  (testing "clear"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (set-element driver :id "input1" "somestring")
+      (clear driver (get-element driver :id "input1"))
+      (is (= "" (get-element-value driver :id "input1" :value)))
+      (set-element driver :id "input1" "somestring")
+      (clear driver :id "input1")
+      (is (= "" (get-element-value driver :id "input1" :value))))))
+
+(deftest ^:parallel wait-for-element-test
+  (testing "wait-for-element"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (= "potato") (get-element-value (wait-for-element driver :id "input2" 5) :value))
+      (click driver :id "btn3")
+      (click driver :id "btn2")
+      (is (= "potato") (get-element-value (wait-for-element driver :id "input2") :value)))))
+
+(deftest ^:parallel is-visible-test
+  (testing "is-visible"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (is-visible driver :id "p2"))
+      (is (not (is-visible driver :id "p4315151")))
+      (is (is-visible (get-element driver :id "p2")))
+      (is (not (is-visible (get-element driver :id "fake news")))))))
