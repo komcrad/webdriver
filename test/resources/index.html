@@ -1,4 +1,16 @@
 <html>
+	<script>
+		function addInput2() {
+			var elm = document.createElement("input");
+			elm.setAttribute("id", "input2");
+			elm.setAttribute("value", "potato");
+			setTimeout(function() {document.body.appendChild(elm);}, 3000);
+		}
+		function removeInput2() {
+			var elm = document.getElementById("input2");
+			document.body.removeChild(elm);
+		}
+	</script>
 	<body>
 		<h1>This is a test resource for glados-webdriveer</h1>
 		<p name='p1'>paragraph 1</p>
@@ -22,6 +34,79 @@
 		<p text='p6'>paragraph 6</p>
 		<p text='p6'>paragraph 6</p>
 		<p text='p6'>paragraph 6</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
+		<p text='p7'>paragraph 7</p>
 		<paragraph>paragraph 7</paragraph>
 		<paragraph>paragraph 7</paragraph>
 		<paragraph>paragraph 7</paragraph>
@@ -30,5 +115,9 @@
 		<paragraph>paragraph 7</paragraph>
 		<paragraph>paragraph 7</paragraph>
 		<button id="btn1">Button 1</button>
+		<br>
+		<input id="input1" />
+		<button id="btn2" onclick=addInput2()>create input2</button>
+		<button id="btn3" onclick=removeInput2()>remove input2</button>
 	</body>
 </html>
