@@ -114,7 +114,7 @@
   (.sendKeys webelement
     (into-array CharSequence
     [(. org.openqa.selenium.Keys BACK_SPACE)])))
-  
+
   ([driver lookup-type lookup-string]
   (clear driver (get-element driver lookup-type lookup-string))))
 
@@ -130,11 +130,11 @@
   ([element]
   (try (and (.isEnabled element) (.isDisplayed element))
        (catch Exception e false)))
-  
+
   ([driver lookup-type lookup-string]
   (try (is-visible (get-element driver lookup-type lookup-string))
        (catch Exception e false))))
-  
+
 (defn input-text
   "sets the value of an input if clear, element will be cleared before
   sending text"
@@ -185,35 +185,14 @@
       (. webelement getAttribute "value")
     :else
       (get-element-value webelement :value)))
-  
+
   ([driver lookup-type lookup-string attribute]
   (get-element-value (get-element driver lookup-type lookup-string) attribute)))
 
-(defn scroll-into-view!
-  "Scrolls the given element into view"
-  [driver element]
-  (let [scrollElementToMiddle
-        (str "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
-        "var elementTop = arguments[0].getBoundingClientRect().top;"
-        "window.scrollBy(0, elementTop-(viewPortHeight/2));")]
-    (execute-script driver scrollElementToMiddle element)))
-
-(defn scroll-to
-  "move to element so it is in view"
-  ([driver webelement]
-  ;(let [actions (new org.openqa.selenium.interactions.Actions driver)]
-  ;  (. actions moveToElement webelement)
-  ;  (. actions perform))
-  (scroll-into-view! driver webelement))
-  
-  ([driver lookup-type lookup-string]
-  (scroll-to driver (get-element driver lookup-type lookup-string))))
-
 (defn click
   "clicks an element"
-  ([driver webelement]
-  (scroll-to driver webelement)
+  ([webelement]
   (.click webelement))
-  
+
   ([driver lookup-type lookup-string]
-   (click driver (get-element driver lookup-type lookup-string))))
+   (click (get-element driver lookup-type lookup-string))))
