@@ -6,14 +6,14 @@
 
 (deftest ^:parallel create-driver-test
   (testing "create-driver"
-    (let [driver (create-driver :chrome [])]
+    (let [driver (create-driver :chrome ["--headless"])]
       (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
       (to driver (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
       (driver-quit driver))
     (let [driver (create-driver :chrome ["--headless"])]
       (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
       (driver-quit driver))
-    (let [driver (create-driver :firefox [])]
+    (let [driver (create-driver :firefox ["--headless"])]
       (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
       (driver-quit driver))
     (let [driver (create-driver :firefox ["--headless"])]
@@ -64,8 +64,8 @@
     (click driver :id "btn1")
     (is (= "Button 1" (get-element-value (focused-element driver) :text)))))
 
-(deftest ^:parallel unfocus-test                                     
-    (testing "unfocus")                                                
+(deftest ^:parallel unfocus-test
+    (testing "unfocus")
       (with-all-drivers
         ["--headless"]
         (to driver test-html-file-url)
@@ -105,3 +105,59 @@
       (is (not (is-visible driver :id "p4315151")))
       (is (is-visible (get-element driver :id "p2")))
       (is (not (is-visible (get-element driver :id "fake news")))))))
+
+(deftest ^:parallel input-text-test
+  (testing "input-text"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (input-text driver (get-element driver :id "input1") "hello there" true)
+      (is (= "hello there" (get-element-value driver :id "input1" :value)))
+      (input-text driver (get-element driver :id "input1") "world" false)
+      (is (= "hello thereworld" (get-element-value driver :id "input1" :value))))))
+
+(deftest ^:parallel set-element-test
+  (testing "set-element"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (set-element driver :id "input1" "hello there")
+      (is (= "hello there" (get-element-value driver :id "input1" :value)))
+      (set-element driver (get-element driver :id "input1") "hello world")
+      (is (= "hello world" (get-element-value driver :id "input1" :value)))
+      (set-element driver :id "select1" "Option 2")
+      (is (= "Option 2" (get-element-value driver :id "select1" :value))))))
+
+(deftest ^:parallel set-elements-test
+  (testing "set-elements"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (set-elements
+        driver
+        [(get-element driver :id "input1") (get-element driver :id "select1")]
+        ["hello there world" "Option 2"])
+      (is (= "hello there world" (get-element-value driver :id "input1" :value)))
+      (is (= "Option 2" (get-element-value driver :id "select1" :value))))))
+
+(deftest ^:parallel get-element-value-test
+  (testing "get-element-value"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (set-element driver :id "input1" "hello")
+      (set-element driver :id "select1" "Option 3")
+      (is (= "hello" (get-element-value driver :id "input1" :value)))
+      (is (= "Option 3" (get-element-value driver :id "select1" :value))))))
+
+(deftest ^:parallel click-test
+  (testing "click"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "btn4")
+      (is (= "toothpick" (get-element-value driver :id "input6" :value)))
+      (to driver "https://google.com")
+      (to driver test-html-file-url)
+      (click (get-element driver :id "btn4"))
+      (is (= "toothpick" (get-element-value driver :id "input6" :value))))))
