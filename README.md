@@ -1,14 +1,36 @@
 # glados-webdriver
 
-A Clojure library designed to ... well, that part is up to you.
+A simplified (far from fully featured) Clojure wrapper of Selenium Webdriver
 
-## Usage
+## Example
+### Assuming you're in a repl (`lein repl`)...
 
-FIXME
+Import the core namespace:
 
-## License
+`(use 'glados-webdriver.core)`
 
-Copyright © 2017 FIXME
+Create a driver object
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+For chrome:
+
+`(def driver (create-driver :chrome []))`
+
+For Firefox:
+
+`(def driver (create-driver :firefox []))`
+
+For headless:
+
+`(def driver (create-driver :chrome ["--headless"]))`
+
+Now you can pass the driver object into the other functions in core to manipulate it.
+
+```
+(to driver "https://google.com")
+(set-element driver :name "q" "silly memes")
+(click driver :xpath "//input[@value ='Google Search'][1]")
+```
+
+etc...
+
+core.clj contains functions to handle common browser tasks. You can either read through that or checkout tests/glados-webdriver/core_test.clj for unit test examples.
