@@ -6,6 +6,12 @@
 			elm.setAttribute("value", "potato");
 			setTimeout(function() {document.body.appendChild(elm);}, 3000);
 		}
+		function addInput6() {
+			var elm = document.createElement("input");
+			elm.setAttribute("id", "input6");
+			elm.setAttribute("value", "toothpick");
+			document.body.appendChild(elm);
+		}
 		function removeInput2() {
 			var elm = document.getElementById("input2");
 			document.body.removeChild(elm);
@@ -116,8 +122,18 @@
 		<paragraph>paragraph 7</paragraph>
 		<button id="btn1">Button 1</button>
 		<br>
-		<input id="input1" />
+		<input type="text" id="input1" />
 		<button id="btn2" onclick=addInput2()>create input2</button>
 		<button id="btn3" onclick=removeInput2()>remove input2</button>
+		<button id="btn4" onclick=addInput6()>add input3</button>
+    <input type="text" id="input3" />
+    <input type="text" id="input4" />
+    <input type="text" id="input5" />
+	<br>
+	<select id="select1">
+		<option>Option 1</option>
+		<option>Option 2</option>
+		<option>Option 3</option>
+	</select>
 	</body>
 </html>
