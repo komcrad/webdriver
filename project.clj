@@ -8,4 +8,5 @@
                  [io.github.bonigarcia/webdrivermanager "1.7.2"]
                  [org.slf4j/slf4j-api "1.7.25"]
                  [org.slf4j/slf4j-simple "1.7.25"]]
-  :plugins [[com.holychao/parallel-test "0.3.1"]])
+  :plugins [[com.holychao/parallel-test "0.3.1"]
+            [lein-autoreload "0.1.1"]])

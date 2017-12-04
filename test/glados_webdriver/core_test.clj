@@ -161,3 +161,36 @@
       (to driver test-html-file-url)
       (click (get-element driver :id "btn4"))
       (is (= "toothpick" (get-element-value driver :id "input6" :value))))))
+
+(deftest ^:parallel alert-text-test
+  (testing "alert-text"
+    (with-all-drivers []
+      (execute-script driver "alert('hello world')")
+      (is (= "hello world" (alert-text driver))))))
+
+(deftest ^:parallel alert-accept-test
+  (testing "alert-accept"
+    (with-all-drivers []
+      (to driver test-html-file-url)
+      (execute-script driver "alert(alert('hello world'))")
+      (is (= "hello world" (alert-text driver)))
+      (is (thrown? Exception (click driver :id "btn1")))
+      (alert-accept driver)
+      (is (= "undefined" (alert-text driver)))
+      (alert-accept driver)
+      (is (= nil (click driver :id "btn1"))))))
+
+(deftest ^:parallel alert-dismiss-test
+  (testing "alert-dismiss"
+    (with-all-drivers []
+      (to driver test-html-file-url)
+      (execute-script driver "alert(confirm('do you like jolly bears?'))")
+      (is (= "do you like jolly bears?" (alert-text driver)))
+      (alert-accept driver)
+      (is (= "true" (alert-text driver)))
+      (alert-accept driver)
+      (execute-script driver "alert(confirm('do you like jolly bears?'))")
+      (is (= "do you like jolly bears?" (alert-text driver)))
+      (alert-dismiss driver)
+      (is (= "false" (alert-text driver)))
+      (alert-accept driver))))
