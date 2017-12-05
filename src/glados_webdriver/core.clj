@@ -219,3 +219,21 @@
 ;(defn alert-input
 ;  [driver s]
 ;  (.sendKeys (.alert (.switchTo driver)) s))
+
+(defn iframe
+  "switches to iframe by index or webelement (via calling (get-element lookup-type lookup-string))"
+  ([driver n]
+   (.frame (.switchTo driver) n))
+
+  ([driver lookup-type lookup-string]
+   (.frame (.switchTo driver) (get-element driver lookup-type lookup-string))))
+
+(defn iframe-parent
+  "switches to parent iframe"
+  [driver]
+  (.parentFrame (.switchTo driver)))
+
+(defn iframe-default
+  "switches to default content (main body of the html that contains all the iframes)"
+  [driver]
+  (.defaultContent (.switchTo driver)))
