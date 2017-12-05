@@ -7,6 +7,7 @@
 
 (defn create-driver
   ([driver-type args]
+  (. (. (. java.util.logging.LogManager getLogManager) getLogger "") setLevel (java.util.logging.Level/OFF))
   (cond
     (= :chrome driver-type)
       (dm/create-chrome-driver args)
