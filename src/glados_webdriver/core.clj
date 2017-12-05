@@ -196,3 +196,20 @@
 
   ([driver lookup-type lookup-string]
    (click (get-element driver lookup-type lookup-string))))
+
+(defn alert-text
+  [driver]
+  (.getText (.alert (.switchTo driver))))
+
+(defn alert-accept
+  [driver]
+  (.accept (.alert (.switchTo driver))))
+
+(defn alert-dismiss
+  [driver]
+  (.dismiss(.alert (.switchTo driver))))
+
+; unfortunately this is broken in chrome at the moment so it won't be supported
+;(defn alert-input
+;  [driver s]
+;  (.sendKeys (.alert (.switchTo driver)) s))
