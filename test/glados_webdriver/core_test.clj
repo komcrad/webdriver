@@ -85,6 +85,18 @@
       (clear driver :id "input1")
       (is (= "" (get-element-value driver :id "input1" :value))))))
 
+(deftest ^:parallel implicit-wait-test
+  (testing "implicit-wait")
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (thrown? NullPointerException (get-element-value driver :id "input2" :value)))
+      (to driver test-html-file-url)
+      (implicit-wait driver 10)
+      (click driver :id "btn2")
+      (is (= "potato" (get-element-value driver :id "input2" :value)))))
+
 (deftest ^:parallel wait-for-element-test
   (testing "wait-for-element"
     (with-all-drivers
