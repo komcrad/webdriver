@@ -34,3 +34,7 @@ Now you can pass the driver object into the other functions in core to manipulat
 etc...
 
 core.clj contains functions to handle common browser tasks. You can either read through that or checkout tests/glados-webdriver/core_test.clj for unit test examples.
+
+## Known issues
+- chromedriver does not handle alerts properly when headless
+- chromedriver does not ignore insecure ssl certs when headless
