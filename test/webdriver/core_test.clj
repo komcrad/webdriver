@@ -1,6 +1,6 @@
-(ns glados-webdriver.core-test
+(ns webdriver.core-test
   (:require [clojure.test :refer :all]
-            [glados-webdriver.core :refer :all]
+            [webdriver.core :refer :all]
             [clojure.java.io :as io]))
 (def test-html-file-url (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
 
