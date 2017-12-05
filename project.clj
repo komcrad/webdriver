@@ -1,4 +1,4 @@
-(defproject glados-webdriver "0.1.0-SNAPSHOT"
+(defproject glados-webdriver "0.1.1"
   :description "A clojure selenium webdriver wrapper"
   :url "https://github.com/komcrad/glados-webdriver"
   :license {:name "GPL-2.0"
