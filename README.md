@@ -2,6 +2,9 @@
 
 A simplified (far from fully featured) Clojure wrapper of Selenium Webdriver
 
+## Usage
+[![Clojars Project](https://img.shields.io/clojars/v/glados-webdriver.svg)](https://clojars.org/glados-webdriver)
+
 ## Example
 ### Assuming you're in a repl (`lein repl`)...
 
