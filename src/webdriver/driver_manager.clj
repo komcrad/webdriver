@@ -1,4 +1,4 @@
-(ns glados-webdriver.driver-manager
+(ns webdriver.driver-manager
   (:gen-class))
 
 (defn create-chrome-driver     

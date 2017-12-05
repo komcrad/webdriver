@@ -1,9 +1,9 @@
-(ns glados-webdriver.core
+(ns webdriver.core
   (:gen-class)
   (:import
     [org.openqa.selenium.remote RemoteWebDriver]
     [org.openqa.selenium WebElement])
-  (:require [glados-webdriver.driver-manager :as dm]))
+  (:require [webdriver.driver-manager :as dm]))
 
 (defn create-driver
   ([driver-type args]
