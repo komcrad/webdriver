@@ -119,6 +119,11 @@
   ([driver lookup-type lookup-string]
   (clear driver (get-element driver lookup-type lookup-string))))
 
+(defn implicit-wait
+  "sets driver's implicit wait timeout (in seconds)"
+  [driver timeout]
+  (.implicitlyWait (.timeouts (.manage driver)) timeout (java.util.concurrent.TimeUnit/SECONDS)))
+
 (defn wait-for-element
   "needs implementation"
   ([driver lookup-type lookup-string max-wait]
