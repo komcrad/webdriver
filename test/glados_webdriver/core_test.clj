@@ -206,3 +206,34 @@
       (alert-dismiss driver)
       (is (= "false" (alert-text driver)))
       (alert-accept driver))))
+
+(deftest ^:parallel iframe-test
+  (testing "iframe"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (is (thrown? java.lang.NullPointerException (get-element-value driver :id "iframeBChild" :text)))
+      (iframe driver 1)
+      (is (= "I'm child B" (get-element-value driver :id "iframeBChild" :text)))
+      (to driver test-html-file-url)
+      (iframe driver :id "iframeA")
+      (is (= "I'm child A" (get-element-value driver :id "iframeAChild" :text))))))
+
+(deftest ^:parallel iframe-parent-test
+  (testing "iframe"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (iframe driver :id "iframeB")
+      (iframe driver :id "iframeC")
+      (is (= "I'm child C" (get-element-value driver :id "iframeCChild" :text)))
+      (iframe-parent driver)
+      (is (= "I'm child B" (get-element-value driver :id "iframeBChild" :text))))))
+
+(deftest ^:parallel iframe-default-test
+  (testing "iframe-default"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (iframe driver :id "iframeB")
+      (iframe driver :id "iframeC")
+      (is (= "I'm child C" (get-element-value driver :id "iframeCChild" :text)))
+      (iframe-default driver)
+      (is (= "paragraph 1" (get-element-value driver :name "p1" :text))))))
