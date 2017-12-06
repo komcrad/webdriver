@@ -1,4 +1,4 @@
-(defproject webdriver "0.1.0"
+(defproject webdriver "0.1.1"
   :description "A clojure selenium webdriver wrapper"
   :url "https://github.com/komcrad/webdriver"
   :license {:name "GPL-2.0"
