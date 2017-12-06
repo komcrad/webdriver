@@ -6,6 +6,8 @@
   (:require [webdriver.driver-manager :as dm]))
 
 (defn create-driver
+  "creates a chrome or firefox driver based on passing in :chrome or :firefox.
+   args would be a verctor for command line arguments like [\"--headless\"]"
   ([driver-type args]
   (. (. (. java.util.logging.LogManager getLogManager) getLogger "") setLevel (java.util.logging.Level/OFF))
   (cond
@@ -21,25 +23,30 @@
 
 
 (defmacro with-driver
+  "creates a driver, executes the forms in body, and closes the driver.
+   driver is closed in the case of an exception"
   ([driver-type driver-args & body]
   (list 'let (vector 'driver (list 'create-driver driver-type driver-args))
         (list 'try (cons 'do body) '(catch Exception e (throw e)) '(finally (driver-quit driver))))))
 
 (defmacro with-all-drivers
+  "Same as with-driver but evaluates the forms in body agains all supported driver types.
+   See examples in the unit tests"
   [driver-args & body]
   `(do (with-driver :chrome ~driver-args ~@body)
        (with-driver :firefox ~driver-args ~@body)))
 
 (defn to
-  "Navigates the driver to the given url"
+  "Navigates driver to the given url"
   ([driver url] (. driver get url)))
 
 (defn driver-quit
-  "calls quit on the driver"
+  "calls quit on driver"
   ([driver]
     (. driver quit)))
 
 (defn by
+  "Returns a By object. Used for element queries"
   [lookup-type lookup-string]
   (cond
     (= :id lookup-type)
@@ -60,19 +67,20 @@
     :else (throw (Exception. (str "get-element has no option \"" lookup-type "\"")))))
 
 (defn get-elements
-  "finds an element and returns WebElement"
-  [driver lookup-type element-name]
+  "finds elements that match lookup-type and lookup-string and returns a vector of those WebElements"
+  [driver lookup-type lookup-string]
   (if lookup-type
-    (. driver findElements (by lookup-type element-name))))
+    (. driver findElements (by lookup-type lookup-string))))
 
 (defn get-element
-  "returns the first element matching lookup-string"
+  "returns the first element matching lookup-type and lookup-string"
   ([driver lookup-type lookup-string]
   (try (nth (get-elements driver lookup-type lookup-string) 0)
        (catch Exception e nil))))
 
 (defn q
-  "finds and returns webelement with name -> linkText -> id s"
+  "Finds and returns webelement with name, id, tagName, className, linkText, text, or xpath.
+   Note: not great to use if using implicit waits."
   [driver s]
    (loop [types [:name :id :tagName
                  :className :linkText :text
@@ -91,10 +99,11 @@
 
 (defn focused-element
   [driver]
+  "Returns the current focused webelement"
   (.activeElement (.switchTo driver)))
 
 (defn execute-script
-    "Version of execute-script that uses a WebDriver instance directly."
+    "Executes js in webdriver"
       [^RemoteWebDriver webdriver js & js-args]
         (.executeScript webdriver ^String js (into-array Object js-args)))
 
@@ -125,7 +134,7 @@
   (.implicitlyWait (.timeouts (.manage driver)) timeout (java.util.concurrent.TimeUnit/SECONDS)))
 
 (defn wait-for-element
-  "needs implementation"
+  "Explicitly waits for element to be clickable with a timeout of max-wait (seconds)"
   ([driver lookup-type lookup-string max-wait]
   (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
      (. org.openqa.selenium.support.ui.ExpectedConditions elementToBeClickable (by lookup-type lookup-string))))
@@ -133,6 +142,7 @@
    (wait-for-element driver lookup-type lookup-string 10)))
 
 (defn is-visible
+  "Returns true if element is visible"
   ([element]
   (try (and (.isEnabled element) (.isDisplayed element))
        (catch Exception e false)))
@@ -142,8 +152,8 @@
        (catch Exception e false))))
 
 (defn input-text
-  "sets the value of an input if clear, element will be cleared before
-  sending text"
+  "sets the value of a text input. If clear-element, element will be cleared before
+  setting the text input"
   [driver webelement s clear-element]
     (if (= "class java.lang.String" (.toString (type webelement)))
       (input-text driver (get-element driver webelement) s clear-element)
@@ -156,7 +166,7 @@
           webelement)))
 
 (defn set-element
-  "sets element e to value s"
+  "sets element e to value s. For select or input elements"
   ([driver e s]
   (if (= "select" (.getTagName e))
    (do
@@ -182,7 +192,8 @@
            (recur (rest elements) (rest values))))))))
 
 (defn get-element-value
-  "gets the value of an element"
+  "gets the value of an element.
+  :text for text and :value for value"
   ([webelement attribute]
   (cond
     (= attribute :text)
@@ -204,14 +215,17 @@
    (click (get-element driver lookup-type lookup-string))))
 
 (defn alert-text
+  "returns the text contained in a js alert box"
   [driver]
   (.getText (.alert (.switchTo driver))))
 
 (defn alert-accept
+  "accepts alert"
   [driver]
   (.accept (.alert (.switchTo driver))))
 
 (defn alert-dismiss
+  "dismisses an alert"
   [driver]
   (.dismiss(.alert (.switchTo driver))))
 
