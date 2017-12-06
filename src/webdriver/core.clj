@@ -251,3 +251,12 @@
   "switches to default content (main body of the html that contains all the iframes)"
   [driver]
   (.defaultContent (.switchTo driver)))
+
+(defn cookie
+  "Creates or retrieves a cookie named cookie-name.
+   Sets cookie's value to cookie-value if provided"
+  ([driver cookie-name cookie-value]
+    (.addCookie (.manage driver) (org.openqa.selenium.Cookie. cookie-name
+                                                              cookie-value)))
+  ([driver cookie-name]
+    (.getValue (.getCookieNamed (.manage driver) cookie-name))))

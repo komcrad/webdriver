@@ -237,3 +237,12 @@
       (is (= "I'm child C" (get-element-value driver :id "iframeCChild" :text)))
       (iframe-default driver)
       (is (= "paragraph 1" (get-element-value driver :name "p1" :text))))))
+
+(deftest ^:parallel cookie-test
+  (testing "cookie"
+    (with-all-drivers ["--headless"]
+      (to driver "https://google.com")
+      (cookie driver "sillynonsensecookie" "I'm silly")
+      (is (= "I'm silly" (cookie driver "sillynonsensecookie")))
+      (cookie driver "sillynonsensecookie" "I'm silly nonsense")
+      (is (= "I'm silly nonsense" (cookie driver "sillynonsensecookie"))))))
