@@ -75,7 +75,11 @@
 (defn get-element
   "returns the first element matching lookup-type and lookup-string"
   ([driver lookup-type lookup-string]
-  (try (nth (get-elements driver lookup-type lookup-string) 0)
+  (try (loop [elements (get-elements driver lookup-type lookup-string)]
+         (if (not (empty? elements))
+           (if (.isDisplayed (first elements))
+             (first elements)
+             (recur (rest elements))) nil))
        (catch Exception e nil))))
 
 (defn q
