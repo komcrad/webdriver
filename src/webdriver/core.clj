@@ -75,12 +75,18 @@
 (defn get-element
   "returns the first element matching lookup-type and lookup-string"
   ([driver lookup-type lookup-string]
-  (try (loop [elements (get-elements driver lookup-type lookup-string)]
-         (if (not (empty? elements))
+  (try (nth (get-elements driver lookup-type lookup-string) 0)
+       (catch Exception e nil))))
+
+(defn get-visible-element
+  "returns the first visible elmeent matching lookip-type and lookup-string"
+  ([driver lookup-type lookup-string]
+   (try (loop [elements (get-elements driver lookup-type lookup-string)]
+          (if (not (empty? elements))
            (if (.isDisplayed (first elements))
              (first elements)
              (recur (rest elements))) nil))
-       (catch Exception e nil))))
+        (catch Exception e nil))))
 
 (defn q
   "Finds and returns webelement with name, id, tagName, className, linkText, text, or xpath.
@@ -130,7 +136,7 @@
     [(. org.openqa.selenium.Keys BACK_SPACE)])))
 
   ([driver lookup-type lookup-string]
-  (clear driver (get-element driver lookup-type lookup-string))))
+  (clear driver (get-visible-element driver lookup-type lookup-string))))
 
 (defn implicit-wait
   "sets driver's implicit wait timeout (in seconds)"
@@ -182,7 +188,7 @@
      (.sendKeys e (into-array CharSequence [s]))
      e)))
   ([driver lookup-type lookup-string s]
-  (set-element driver (get-element driver lookup-type lookup-string) s)))
+  (set-element driver (get-visible-element driver lookup-type lookup-string) s)))
 
 (defn set-elements
   "sets coll of elements e to coll of values v"
@@ -216,7 +222,7 @@
   (.click webelement))
 
   ([driver lookup-type lookup-string]
-   (click (get-element driver lookup-type lookup-string))))
+   (click (get-visible-element driver lookup-type lookup-string))))
 
 (defn alert-text
   "returns the text contained in a js alert box"
