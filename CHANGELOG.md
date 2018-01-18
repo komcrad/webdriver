@@ -1,7 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.2.0]
+## [0.2.1 - 2017-01-17]
+### Added
+- get-visible-element (function that uses get-elements and returns the first visible element)
+
+### Changed
+- reverted 0.2.0 changes
+- click, set-element, and clear all use get-visible-element for queries
+
+
+## [0.2.0 - 2018-01-17]
 ### Changed
 - the get-element function will now only return an element if it is visible.. side-effects include only being able to call (click driver :name "button") (set driver :name "input" "value") on visible elements. You can still pass in webelements. To functions that use get-element
 

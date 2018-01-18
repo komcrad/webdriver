@@ -54,8 +54,14 @@
     (with-all-drivers
       ["--headless"]
       (to driver test-html-file-url)
-      (is (= "paragraph 1" (.getText (get-element driver :name "p1"))))
-      (is (= "not really hidden button" (.getText (get-element driver :id "hiddenbutton")))))))
+      (is (= "paragraph 1" (.getText (get-element driver :name "p1")))))))
+
+(deftest ^:parallel get-visible-element-test
+  (testing "get-visible-element"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= "not really hidden button" (.getText (get-visible-element driver :id "hiddenbutton")))))))
 
 (deftest ^:parallel focused-element-test
   (testing "focused-element")
