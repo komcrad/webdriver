@@ -192,7 +192,7 @@
 
 (defn set-elements
   "sets coll of elements e to coll of values v"
-  [driver e v]
+  ([driver e v]
   (if (= (count e) (count v))
     (do
       (loop [elements e values v]
@@ -200,6 +200,12 @@
          (do
            (set-element driver (first elements) (first values))
            (recur (rest elements) (rest values))))))))
+  ([driver lookup-type lookup-strings values]
+   (when (= (count lookup-strings) (count values))
+     (loop [lookup-strings lookup-strings values values]
+       (when (not (empty? lookup-strings))
+         (set-element driver lookup-type (first lookup-strings) (first values))
+         (recur (rest lookup-strings) (rest values)))))))
 
 (defn get-element-value
   "gets the value of an element.
