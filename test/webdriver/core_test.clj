@@ -157,7 +157,14 @@
         [(get-element driver :id "input1") (get-element driver :id "select1")]
         ["hello there world" "Option 2"])
       (is (= "hello there world" (get-element-value driver :id "input1" :value)))
-      (is (= "Option 2" (get-element-value driver :id "select1" :value))))))
+      (is (= "Option 2" (get-element-value driver :id "select1" :value)))
+      (set-elements driver :id
+                    ["input1" "input3" "input4" "input5"]
+                    ["input1val" "input3val" "input4val" "input5val"])
+      (is (= "input1val" (get-element-value driver :id "input1" :value)))
+      (is (= "input3val" (get-element-value driver :id "input3" :value)))
+      (is (= "input4val" (get-element-value driver :id "input4" :value)))
+      (is (= "input5val" (get-element-value driver :id "input5" :value))))))
 
 (deftest ^:parallel get-element-value-test
   (testing "get-element-value"
