@@ -186,6 +186,7 @@
    (do
      (clear driver e)
      (.sendKeys e (into-array CharSequence [s]))
+     (.sendKeys e (into-array CharSequence [(. org.openqa.selenium.Keys CONTROL)]))
      e)))
   ([driver lookup-type lookup-string s]
   (set-element driver (get-visible-element driver lookup-type lookup-string) s)))
