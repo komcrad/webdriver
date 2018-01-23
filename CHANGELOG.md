@@ -1,9 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.2.2 -2018-01-29]
+## [0.2.3 - 2018-01-23]
+- Changes how elements are set so they will trigger key-up events
+
+## [0.2.2 - 2018-01-19]
 ### Added
 - set-elements option to query for elements
+
 ## [0.2.1 - 2018-01-17]
 ### Added
 - get-visible-element (function that uses get-elements and returns the first visible element)
