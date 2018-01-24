@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.seleniumhq.selenium/selenium-java "3.7.1"]
                  [io.github.bonigarcia/webdrivermanager "1.7.2"]
-                 [org.slf4j/slf4j-simple "1.7.25"]]
+                 [org.slf4j/slf4j-simple "1.7.25"]
+                 [komcrad-utils "0.1.5"]]
   :plugins [[com.holychao/parallel-test "0.3.1"]
             [lein-autoreload "0.1.1"]])
