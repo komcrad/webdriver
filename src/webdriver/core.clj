@@ -3,7 +3,8 @@
   (:import
     [org.openqa.selenium.remote RemoteWebDriver]
     [org.openqa.selenium WebElement])
-  (:require [webdriver.driver-manager :as dm]))
+  (:require [webdriver.driver-manager :as dm]
+            [komcrad-utils.wait :refer [wait-for]]))
 
 (defn create-driver
   "creates a chrome or firefox driver based on passing in :chrome or :firefox.
@@ -231,20 +232,29 @@
   ([driver lookup-type lookup-string]
    (click (get-visible-element driver lookup-type lookup-string))))
 
+(defn switch-to-alert
+  [driver]
+  (wait-for
+    (fn [] (try (.alert (.switchTo driver)) true (catch Exception e false))) 2000 20)
+  (.alert (.switchTo driver)))
+
 (defn alert-text
   "returns the text contained in a js alert box"
   [driver]
-  (.getText (.alert (.switchTo driver))))
+  (let [result (.getText (switch-to-alert driver))]
+    (Thread/sleep 10) result))
 
 (defn alert-accept
   "accepts alert"
   [driver]
-  (.accept (.alert (.switchTo driver))))
+  (.accept (switch-to-alert driver))
+  (Thread/sleep 10))
 
 (defn alert-dismiss
   "dismisses an alert"
   [driver]
-  (.dismiss(.alert (.switchTo driver))))
+  (.dismiss (switch-to-alert driver))
+  (Thread/sleep 10))
 
 ; unfortunately this is broken in chrome at the moment so it won't be supported
 ;(defn alert-input
