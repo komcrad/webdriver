@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.2.4 - 2018-01-23]
+- Downloads go to current directory (for firefox there is a whitelist of MIME types that will download without prompt)
+- Chrome will always ignore cert errors
+
 ## [0.2.3 - 2018-01-23]
 - Changes how elements are set so they will trigger key-up events
 
