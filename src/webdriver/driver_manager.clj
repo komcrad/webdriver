@@ -8,7 +8,7 @@
   (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) setup)
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
-    (. options addArguments args)
+    (. options addArguments (concat args ["--window-size=1920x1080"]))
     (.setExperimentalOption options "prefs"
                             (doto (new java.util.HashMap)
                              (.put "profile.default_content_settings.popups" 0)

@@ -4,7 +4,8 @@
     [org.openqa.selenium.remote RemoteWebDriver]
     [org.openqa.selenium WebElement])
   (:require [webdriver.driver-manager :as dm]
-            [komcrad-utils.wait :refer [wait-for]]))
+            [komcrad-utils.wait :refer [wait-for]]
+            [clojure.java.io :as io]))
 
 (defn create-driver
   "creates a chrome or firefox driver based on passing in :chrome or :firefox.
@@ -287,3 +288,9 @@
                                                               cookie-value)))
   ([driver cookie-name]
     (.getValue (.getCookieNamed (.manage driver) cookie-name))))
+
+(defn screen-shot
+  [driver output]
+  (io/copy (.getScreenshotAs (cast org.openqa.selenium.TakesScreenshot driver)
+                             (org.openqa.selenium.OutputType/FILE))
+           (io/file output)))
