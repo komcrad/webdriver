@@ -114,6 +114,11 @@
   "Returns the current focused webelement"
   (.activeElement (.switchTo driver)))
 
+(defn send-keys
+  "sends element the keys found in str s"
+  [element s]
+  (.sendKeys element (into-array CharSequence [s])))
+
 (defn execute-script
     "Executes js in webdriver"
       [^RemoteWebDriver webdriver js & js-args]
@@ -176,6 +181,11 @@
                                             [(. org.openqa.selenium.Keys CONTROL)]))
           (unfocus driver)
           webelement)))
+
+(defn set-file-input
+  "Sets file input's path"
+  [element s]
+  (send-keys element s))
 
 (defn set-element
   "sets element e to value s. For select or input elements"
