@@ -1,7 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
-## [unreleased]
+## [0.2.5 - 2018-02-05]
 ### Added
+- function to set file input elements
+- wrapper around sendKeys
 - function for taking screenshots of the driver
 
 ## [0.2.4 - 2018-01-24]
