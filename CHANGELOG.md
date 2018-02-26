@@ -1,5 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
+
+## [Unreleased]
+### Added
+- ability to click multiple elements by passing in multiple element selectors to core/click
+
 ## [0.2.5 - 2018-02-05]
 ### Added
 - function to set file input elements
