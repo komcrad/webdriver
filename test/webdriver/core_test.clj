@@ -186,7 +186,9 @@
       (to driver "https://google.com")
       (to driver test-html-file-url)
       (click (get-element driver :id "btn4"))
-      (is (= "toothpick" (get-element-value driver :id "input6" :value))))))
+      (is (= "toothpick" (get-element-value driver :id "input6" :value)))
+      (click driver :id "btn4" "btn4" "btn4")
+      (is (= (count (get-elements driver :id "input6")) 4)))))
 
 (deftest ^:parallel alert-text-test
   (testing "alert-text"

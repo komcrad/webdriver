@@ -240,8 +240,9 @@
   ([webelement]
   (.click webelement))
 
-  ([driver lookup-type lookup-string]
-   (click (get-visible-element driver lookup-type lookup-string))))
+  ([driver lookup-type & lookup-strings]
+   (doseq [lookup lookup-strings]
+     (click (get-visible-element driver lookup-type lookup)))))
 
 (defn switch-to-alert
   [driver]
