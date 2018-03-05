@@ -244,6 +244,14 @@
    (doseq [lookup lookup-strings]
      (click (get-visible-element driver lookup-type lookup)))))
 
+(defn wait-click
+  "waits with timeout (seconds) for element then clicks"
+  ([driver lookup-type lookup-string timeout]
+     (wait-for-element driver lookup-type lookup-string timeout)
+     (click driver lookup-type lookup-string)
+   [driver lookup-type lookup-string]
+     (wait-click driver lookup-type lookup-string 10)))
+
 (defn switch-to-alert
   [driver]
   (wait-for
