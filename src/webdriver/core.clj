@@ -220,6 +220,16 @@
          (set-element driver lookup-type (first lookup-strings) (first values))
          (recur (rest lookup-strings) (rest values)))))))
 
+(defn attr
+  ([webelement attribute]
+   (cond
+     (= attribute :text)
+     (.getText webelement)
+     :else
+     (.getAttribute webelement (name attribute))))
+  ([driver lookup-type lookup-string attribute]
+   (attr (get-element driver lookup-type lookup-string) attribute)))
+
 (defn get-element-value
   "gets the value of an element.
   :text for text and :value for value"
@@ -247,10 +257,10 @@
 (defn wait-click
   "waits with timeout (seconds) for element then clicks"
   ([driver lookup-type lookup-string timeout]
-     (wait-for-element driver lookup-type lookup-string timeout)
-     (click driver lookup-type lookup-string)
-   [driver lookup-type lookup-string]
-     (wait-click driver lookup-type lookup-string 10)))
+    (wait-for-element driver lookup-type lookup-string timeout)
+    (click driver lookup-type lookup-string))
+  ([driver lookup-type lookup-string]
+    (wait-click driver lookup-type lookup-string 10)))
 
 (defn switch-to-alert
   [driver]

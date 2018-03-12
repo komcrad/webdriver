@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file. This change
 
 ## [Unreleased]
 ### Added
+- attr function
+- wait-click function
 - ability to click multiple elements by passing in multiple element selectors to core/click
 
 ## [0.2.5 - 2018-02-05]
