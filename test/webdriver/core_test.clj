@@ -166,6 +166,23 @@
       (is (= "input4val" (get-element-value driver :id "input4" :value)))
       (is (= "input5val" (get-element-value driver :id "input5" :value))))))
 
+(deftest ^:parallel attr-test
+  (testing "attr"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (let [elm (get-element driver :name "span1")]
+        (is (= "span1" (attr elm :name)))
+        (is (= "span1" (attr driver :name "span1" :name)))
+        (is (= "span1id" (attr elm :id)))
+        (is (= "span1id" (attr driver :name "span1" :id)))
+        (is (= "hello" (attr elm :onclick)))
+        (is (= "hello" (attr driver :name "span1" :onclick)))
+        (is (= "im fake" (attr elm :fakeattribute)))
+        (is (= "im fake" (attr driver :name "span1" :fakeattribute)))
+        (is (= "span 1" (attr elm :text)))
+        (is (= "span 1" (attr driver :name "span1" :text)))))))
+
 (deftest ^:parallel get-element-value-test
   (testing "get-element-value"
     (with-all-drivers
@@ -189,6 +206,26 @@
       (is (= "toothpick" (get-element-value driver :id "input6" :value)))
       (click driver :id "btn4" "btn4" "btn4")
       (is (= (count (get-elements driver :id "input6")) 4)))))
+
+(deftest ^:parallel wait-click-test
+  (testing "wait-click"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (let [time1 (Float/parseFloat (nth (clojure.string/split
+                                           (with-out-str
+                                             (time (try (wait-click driver :name "fakelement")
+                                                        (catch Exception e)))) #" ") 2))
+            time2 (Float/parseFloat (nth (clojure.string/split
+                                           (with-out-str
+                                             (time (try (wait-click driver :name "fakelement" 5)
+                                                        (catch Exception e)))) #" ") 2))]
+        (is (< 10000 time1))
+        (is (> 11000 time1))
+        (is (<  5000 time2))
+        (is (>  6000 time2)))
+      (click driver :id "btn2")
+      (is (thrown? Exception (wait-click driver :id "input2" 1)))
+      (is (nil? (wait-click driver :id "input2"))))))
 
 (deftest ^:parallel alert-text-test
   (testing "alert-text"
