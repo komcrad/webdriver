@@ -1,23 +1,27 @@
 <html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
 	<script>
 		function addInput2() {
 			var elm = document.createElement("input");
 			elm.setAttribute("id", "input2");
 			elm.setAttribute("value", "potato");
-			setTimeout(function() {document.body.appendChild(elm);}, 3000);
+			setTimeout(function() {document.getElementById("main").appendChild(elm);}, 3000);
 		}
 		function addInput6() {
 			var elm = document.createElement("input");
 			elm.setAttribute("id", "input6");
 			elm.setAttribute("value", "toothpick");
-			document.body.appendChild(elm);
+			document.getElementById("main").appendChild(elm);
 		}
 		function removeInput2() {
 			var elm = document.getElementById("input2");
-			document.body.removeChild(elm);
+			document.getElementById("main").removeChild(elm);
 		}
 	</script>
 	<body>
+		<div id="main">
 		<h1>This is a test resource for glados-webdriveer</h1>
 		<span name='span1' id='span1id' onclick='hello' fakeattribute='im fake'>span 1</span>
 		<p name='p1'>paragraph 1</p>
@@ -140,5 +144,10 @@
 	</select>
 	<iframe id="iframeA" src="iframeA.html" /></iframe>
 	<iframe id="iframeB" src="iframeB.html" /></iframe>
+	</div>
+	<div id="buffer" />
+	<footer id="footer">
+		<span>A shroud</span>
+	</footer>
 	</body>
 </html>

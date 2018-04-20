@@ -131,9 +131,17 @@
                               "document.body.appendChild(tmp); tmp.focus();"
                               "document.body.removeChild(tmp);")))
 
+(defn scroll-into-view
+  "scrolls webelemnt into view"
+  ([driver webelement]
+   (execute-script driver "arguments[0].scrollIntoView(true);" webelement))
+  ([driver lookup-type lookup-string]
+   (scroll-into-view driver (get-element driver lookup-type lookup-string))))
+
 (defn clear
   "clears webelement"
   ([driver webelement]
+  (scroll-into-view driver webelement)
   (.sendKeys webelement
     (into-array CharSequence
                 [(org.openqa.selenium.Keys/chord
@@ -172,6 +180,7 @@
   "sets the value of a text input. If clear-element, element will be cleared before
   setting the text input"
   [driver webelement s clear-element]
+    (scroll-into-view driver webelement)
     (if (= "class java.lang.String" (.toString (type webelement)))
       (input-text driver (get-element driver webelement) s clear-element)
       (do (if clear-element
@@ -190,6 +199,7 @@
 (defn set-element
   "sets element e to value s. For select or input elements"
   ([driver e s]
+  (scroll-into-view driver e)
   (if (= "select" (.getTagName e))
    (do
      (. (new org.openqa.selenium.support.ui.Select e)
@@ -221,6 +231,7 @@
          (recur (rest lookup-strings) (rest values)))))))
 
 (defn attr
+  "returns the value of an element's attribute"
   ([webelement attribute]
    (cond
      (= attribute :text)
@@ -229,6 +240,13 @@
      (.getAttribute webelement (name attribute))))
   ([driver lookup-type lookup-string attribute]
    (attr (get-element driver lookup-type lookup-string) attribute)))
+
+(defn css
+  "returns the value of a webelement's css value attribute"
+  ([webelement attribute]
+    (.getCssValue webelement attribute))
+  ([driver lookup-type lookup-string attribute]
+    (css (get-element driver lookup-type lookup-string) attribute)))
 
 (defn get-element-value
   "gets the value of an element.
@@ -250,9 +268,13 @@
   ([webelement]
   (.click webelement))
 
+  ([driver webelement]
+    (scroll-into-view driver webelement)
+    (click webelement))
+
   ([driver lookup-type & lookup-strings]
    (doseq [lookup lookup-strings]
-     (click (get-visible-element driver lookup-type lookup)))))
+     (click driver (get-visible-element driver lookup-type lookup)))))
 
 (defn wait-click
   "waits with timeout (seconds) for element then clicks"

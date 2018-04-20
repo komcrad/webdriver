@@ -80,6 +80,17 @@
         (unfocus driver)
         (is (not (= "Button 1" (get-element-value (focused-element driver) :text))))))
 
+(deftest ^:parallel scroll-into-view-test
+  (testing "scroll-into-view"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (let [elm (get-element driver :id "btn1")]
+        (scroll-into-view driver elm)
+        (is (nil? (.click elm)))
+        (click driver :name "span1")
+        (scroll-into-view driver :id "btn1")
+        (is (nil? (.click elm)))))))
+
 (deftest ^:parallel clear-test
   (testing "clear"
     (with-all-drivers
@@ -183,6 +194,19 @@
         (is (= "span 1" (attr elm :text)))
         (is (= "span 1" (attr driver :name "span1" :text)))))))
 
+(deftest ^:parallel css-test
+  (testing "css"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (let [elm (get-element driver :id "footer")]
+        (is (= "100" (css elm "z-index")))
+        (is (= "0px" (css elm "left")))
+        (is (= "fixed" (css elm "position"))))
+      (is (= "100" (css driver :id "footer" "z-index")))
+      (is (= "0px" (css driver :id "footer" "left")))
+      (is (= "fixed" (css driver :id "footer" "position"))))))
+
 (deftest ^:parallel get-element-value-test
   (testing "get-element-value"
     (with-all-drivers
@@ -202,6 +226,7 @@
       (is (= "toothpick" (get-element-value driver :id "input6" :value)))
       (to driver "https://google.com")
       (to driver test-html-file-url)
+      (scroll-into-view driver :id "btn4")
       (click (get-element driver :id "btn4"))
       (is (= "toothpick" (get-element-value driver :id "input6" :value)))
       (click driver :id "btn4" "btn4" "btn4")
