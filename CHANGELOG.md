@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file. This change
 
 ## [Unreleased]
 ### Added
+- added scroll-into-view in all functions where element being visible is important
+- scroll-into-view function
+- css function
 - attr function
 - wait-click function
 - ability to click multiple elements by passing in multiple element selectors to core/click
