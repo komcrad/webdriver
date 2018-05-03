@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.3.0 - 2018-05-03]
 ### Added
 - added scroll-into-view in all functions where element being visible is important
 - scroll-into-view function
