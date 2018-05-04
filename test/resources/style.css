@@ -1,0 +1,16 @@
+body {
+	position: relative;
+}
+
+#buffer {
+	height: 5vh;
+}
+#footer {
+	z-index: 100;
+	background: #dadada;
+	position: fixed; 
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 5vh;
+}

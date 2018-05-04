@@ -134,7 +134,7 @@
 (defn scroll-into-view
   "scrolls webelemnt into view"
   ([driver webelement]
-   (execute-script driver "arguments[0].scrollIntoView(true);" webelement))
+   (execute-script driver "arguments[0].scrollIntoView({block: 'center'});" webelement))
   ([driver lookup-type lookup-string]
    (scroll-into-view driver (get-element driver lookup-type lookup-string))))
 

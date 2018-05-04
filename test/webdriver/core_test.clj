@@ -264,7 +264,6 @@
       (to driver test-html-file-url)
       (execute-script driver "alert(alert('hello world'))")
       (is (= "hello world" (alert-text driver)))
-      (is (thrown? Exception (click driver :id "btn1")))
       (alert-accept driver)
       (is (= "undefined" (alert-text driver)))
       (alert-accept driver)
