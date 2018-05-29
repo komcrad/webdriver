@@ -5,6 +5,7 @@
   "creates a chromedriver and passes in vector args as command line arguments"
   [args]                       
   (. System setProperty "wdm.targetPath" ".webdrivers/")
+  (. System setProperty "webdriver.chrome.silentOutput", "true")
   (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) setup)
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
