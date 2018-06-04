@@ -4,6 +4,7 @@ A simplified (far from fully featured) Clojure wrapper of Selenium Webdriver
 
 ## Usage
 [![Clojars Project](https://img.shields.io/clojars/v/webdriver.svg)](https://clojars.org/webdriver)
+[![CircleCI](https://circleci.com/gh/komcrad/webdriver/tree/master.svg?style=svg&circle-token=a5fcd5b0389dd482ec5e55fb3c6bab0715377cd9)](https://circleci.com/gh/komcrad/webdriver/tree/master)
 
 ## Example
 ### Assuming you're in a repl (`lein repl`)...
