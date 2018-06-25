@@ -161,8 +161,9 @@
 (defn wait-for-element
   "Explicitly waits for element to be clickable with a timeout of max-wait (seconds)"
   ([driver lookup-type lookup-string max-wait]
-  (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
-     (. org.openqa.selenium.support.ui.ExpectedConditions elementToBeClickable (by lookup-type lookup-string))))
+    (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
+       (. org.openqa.selenium.support.ui.ExpectedConditions elementToBeClickable
+          (by lookup-type lookup-string))))
   ([driver lookup-type lookup-string]
    (wait-for-element driver lookup-type lookup-string 10)))
 
@@ -283,6 +284,40 @@
     (click driver lookup-type lookup-string))
   ([driver lookup-type lookup-string]
     (wait-click driver lookup-type lookup-string 10)))
+
+(defn try-click
+  "repeatedly trys to click webelement until no exception occurs or
+   the timeout (seconds) expires"
+  ([driver lookup-type lookup-string timeout]
+   (wait-for
+    #(try (click driver lookup-type lookup-string) true
+          (catch Exception e false))
+    (* 1000 timeout) 500))
+  ([driver lookup-type lookup-string]
+   (try-click driver lookup-type lookup-string 10)))
+
+(defn wait-q
+  "returns a list of elements.
+  Does not return elements until the query contains visible elements
+  require-visible determines if the final seq returned are only visible
+  elements matching the query"
+  ([driver lookup-type lookup-string timeout require-visible]
+   (wait-for (fn [] (not (empty? (filter #(is-visible %)
+     (get-elements driver lookup-type
+                   lookup-string)))))
+     (* 1000 timeout) 500)
+     (let [elements (if require-visible
+                      (filter #(is-visible %)
+                        (get-elements driver lookup-type
+                                      lookup-string))
+                      (get-elements driver lookup-type lookup-string))]
+       (cond (empty? elements) nil
+             (= 1 (count elements)) (first elements)
+             :else elements)))
+  ([driver lookup-type lookup-string timeout]
+   (wait-q driver lookup-type lookup-string timeout false))
+  ([driver lookup-type lookup-string]
+   (wait-q driver lookup-type lookup-string 10)))
 
 (defn switch-to-alert
   [driver]
