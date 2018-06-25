@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.4.0 - 2018-06-25]
+### Added
+- functions for dealing with invisible and unclickable elements (wait-q and try-click)
+
 ## [0.3.2 - 2018-05-29]
 ### Fixed
 - annoying chromedriver startup logging

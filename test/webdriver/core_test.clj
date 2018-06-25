@@ -252,6 +252,42 @@
       (is (thrown? Exception (wait-click driver :id "input2" 1)))
       (is (nil? (wait-click driver :id "input2"))))))
 
+(deftest try-click-test
+  (testing "try-click"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (try-click driver :id "input2" 10))
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (not (try-click driver :id "input2" 2)))
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (try-click driver :id "input2")))))
+
+(deftest wait-q-test
+  (testing "wait-q"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (is (nil? (wait-q driver :id "input2" 2)))
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (= org.openqa.selenium.remote.RemoteWebElement
+             (type (wait-q driver :id "input2" 10))))
+      (click driver :id "btn2")
+      (Thread/sleep 6000)
+      (is (= 2 (count (wait-q driver :id "input2" 10))))
+      (execute-script driver (str "var tmp = document.createElement('input');"
+                                  "tmp.setAttribute('id', 'input2');"
+                                  "tmp.setAttribute('hidden', 'true');"
+                                  "document.body.appendChild(tmp);"))
+      (is (= 3 (count (wait-q driver :id "input2" 10))))
+      (is (= 2 (count (wait-q driver :id "input2" 10 true))))
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (= org.openqa.selenium.remote.RemoteWebElement
+             (type (wait-q driver :id "input2")))))))
+
 (deftest ^:parallel alert-text-test
   (testing "alert-text"
     (with-all-drivers []
