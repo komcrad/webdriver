@@ -231,6 +231,21 @@
          (set-element driver lookup-type (first lookup-strings) (first values))
          (recur (rest lookup-strings) (rest values)))))))
 
+(defn set-elms
+  "partitions coll into lists of 2
+   each list becomes a key value pair where key is an element identifier
+   and value is the value that element will be set to
+   Eg: (set-elms driver :id [:input1 \"hello\" :input2 \"world\"])
+  
+   if you pass in only a driver and coll, every odd element should be an WebElement"
+  ([driver coll]
+   {:pre [(even? (count coll))]}
+   (doseq [[elm val] (partition 2 coll)] (set-element driver elm val)))
+  ([driver lookup-type coll]
+   {:pre [(even? (count coll))]}
+   (doseq [[elm val] (partition 2 coll)]
+     (set-element driver lookup-type (if (keyword? elm) (name elm) elm) val))))
+
 (defn attr
   "returns the value of an element's attribute"
   ([webelement attribute]
