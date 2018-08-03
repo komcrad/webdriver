@@ -176,6 +176,14 @@
       (is (= "input3val" (get-element-value driver :id "input3" :value)))
       (is (= "input4val" (get-element-value driver :id "input4" :value)))
       (is (= "input5val" (get-element-value driver :id "input5" :value))))))
+(deftest set-elms-test
+  (testing "set-elms"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (set-elms driver :id [:input3 "hello" :input4 "there" :input5 "world"])
+      (are [elm val] (= (attr (get-element driver :id (name elm)) :value) val)
+           :input3 "hello" :input4 "there" :input5 "world"))))
 
 (deftest ^:parallel attr-test
   (testing "attr"
