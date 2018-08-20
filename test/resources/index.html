@@ -15,6 +15,13 @@
 			elm.setAttribute("value", "toothpick");
 			document.getElementById("main").appendChild(elm);
 		}
+		function addInvisibleInputThreeSecondsFromNow() {
+			var elm = document.createElement("input");
+			elm.setAttribute("id", "input7");
+			elm.setAttribute("value", "are you still there?");
+			elm.setAttribute("hidden", true);
+			setTimeout(function() {document.getElementById("main").appendChild(elm);}, 3000);
+		}
 		function removeInput2() {
 			var elm = document.getElementById("input2");
 			document.getElementById("main").removeChild(elm);
@@ -133,6 +140,7 @@
 		<button id="btn2" onclick=addInput2()>create input2</button>
 		<button id="btn3" onclick=removeInput2()>remove input2</button>
 		<button id="btn4" onclick=addInput6()>add input3</button>
+		<button id="btn5" onclick=addInvisibleInputThreeSecondsFromNow()>add input7</button>
     <input type="text" id="input3" />
     <input type="text" id="input4" />
     <input type="text" id="input5" />

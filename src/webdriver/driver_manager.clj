@@ -15,6 +15,7 @@
                              (.put "profile.default_content_settings.popups" 0)
                              (.put "download.default_directory" ".")))
     (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType ACCEPT_SSL_CERTS) true)
+    (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType ACCEPT_INSECURE_CERTS) true)
     (.setCapability capabilities (. org.openqa.selenium.chrome.ChromeOptions CAPABILITY) options)
     (new org.openqa.selenium.chrome.ChromeDriver capabilities)))
 

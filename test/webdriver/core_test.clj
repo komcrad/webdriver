@@ -126,6 +126,18 @@
       (click driver :id "btn2")
       (is (= "potato") (get-element-value (wait-for-element driver :id "input2") :value)))))
 
+(deftest ^:parallel wait-elm-dom-test
+  (testing "wait-elm-dom"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "btn2")
+      (is (= "potato" (attr (wait-elm-dom driver :id "input2") :value)))
+      (click driver :id "btn5")
+      (is (thrown? Exception (wait-elm-dom driver :id "input7" 1)))
+      (is (= "are you still there?" (attr (wait-elm-dom driver :id "input7") :value)))
+      (is (thrown? Exception (wait-elm-dom driver :id "notanelement" 0))))))
+
 (deftest ^:parallel is-visible-test
   (testing "is-visible"
     (with-all-drivers
