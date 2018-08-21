@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.5.1 - 2018-08-21]
+### Fixed
+- Issue where --headless chromedriver would not ignore insecure certs
+- missing function wait-elm-dom. A function to wait for elment to attach to dom without needing to be clickable.
+
+## [0.5.0 - 2018-08-03]
+### Added
+- New set-elms function that gives the option to use a different syntax for setting multiple elements
 ## [0.4.0 - 2018-06-25]
 ### Added
 - functions for dealing with invisible and unclickable elements (wait-q and try-click)
