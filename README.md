@@ -39,5 +39,9 @@ etc...
 
 core.clj contains functions to handle common browser tasks. You can either read through that or checkout tests/webdriver/core_test.clj for unit test examples.
 
+## Tested versions of firefox and chrome
+- Firefox: 61.0.1
+- Google Chrome 68.0.3440.106
+
 ## Known issues
 - chromedriver does not handle alerts properly when headless
