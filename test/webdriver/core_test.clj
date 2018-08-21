@@ -18,7 +18,13 @@
       (driver-quit driver))
     (let [driver (create-driver :firefox ["--headless"])]
       (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
-      (driver-quit driver))))
+      (driver-quit driver)))
+  (testing "headless-insecure-certs"
+    (with-all-drivers
+      ["--headless"]
+      (to driver "https://self-signed.badssl.com/")
+      (is (= "self-signed.\nbadssl.com"
+             (attr (get-element driver :xpath "//h1") :text))))))
 
 (deftest ^:parallel to-test
   (testing "to"

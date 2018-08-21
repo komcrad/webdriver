@@ -1,9 +1,9 @@
 (ns webdriver.driver-manager
   (:gen-class))
 
-(defn create-chrome-driver     
+(defn create-chrome-driver
   "creates a chromedriver and passes in vector args as command line arguments"
-  [args]                       
+  [args]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
   (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) setup)
