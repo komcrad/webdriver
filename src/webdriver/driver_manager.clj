@@ -1,9 +1,9 @@
 (ns webdriver.driver-manager
   (:gen-class))
 
-(defn create-chrome-driver     
+(defn create-chrome-driver
   "creates a chromedriver and passes in vector args as command line arguments"
-  [args]                       
+  [args]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
   (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) setup)
@@ -15,6 +15,7 @@
                              (.put "profile.default_content_settings.popups" 0)
                              (.put "download.default_directory" ".")))
     (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType ACCEPT_SSL_CERTS) true)
+    (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType ACCEPT_INSECURE_CERTS) true)
     (.setCapability capabilities (. org.openqa.selenium.chrome.ChromeOptions CAPABILITY) options)
     (new org.openqa.selenium.chrome.ChromeDriver capabilities)))
 

@@ -41,4 +41,3 @@ core.clj contains functions to handle common browser tasks. You can either read 
 
 ## Known issues
 - chromedriver does not handle alerts properly when headless
-- chromedriver does not ignore insecure ssl certs when headless

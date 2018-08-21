@@ -167,6 +167,14 @@
   ([driver lookup-type lookup-string]
    (wait-for-element driver lookup-type lookup-string 10)))
 
+(defn wait-elm-dom
+  "Waits for element to exist in dom with a timeout of max-wait (seconds)"
+  ([driver lookup-type lookup-string max-wait]
+   (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
+      (. org.openqa.selenium.support.ui.ExpectedConditions presenceOfElementLocated (by lookup-type lookup-string))))
+  ([driver lookup-type lookup-string]
+   (wait-elm-dom driver lookup-type lookup-string 10)))
+
 (defn is-visible
   "Returns true if element is visible"
   ([element]
