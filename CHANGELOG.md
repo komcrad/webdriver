@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.5.2 - 2018-09-04]
+### Fixed
+- Specifies version of chromedriver that will be used
+
 ## [0.5.1 - 2018-08-21]
 ### Fixed
 - Issue where --headless chromedriver would not ignore insecure certs
