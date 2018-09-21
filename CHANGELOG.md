@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.5.3 - 2018-09-21]
+### Changed
+- Updates version of chromedriver to 2.42 
+- Update circleci to use new webdriver docker image that contains updated web browsers
+
 ## [0.5.2 - 2018-09-04]
 ### Fixed
 - Specifies version of chromedriver that will be used
