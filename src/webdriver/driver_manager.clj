@@ -6,7 +6,7 @@
   [args]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
-  (. (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) version "2.41") setup)
+  (. (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) version "2.42") setup)
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
     (. options addArguments (concat args ["--window-size=1920x1080"]))
