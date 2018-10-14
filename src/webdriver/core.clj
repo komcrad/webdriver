@@ -31,6 +31,19 @@
   (list 'let (vector 'driver (list 'create-driver driver-type driver-args))
         (list 'try (cons 'do body) '(catch Exception e (throw e)) '(finally (driver-quit driver))))))
 
+(defmacro with-webdriver
+  [[driver & {:keys [driver-type driver-args]
+              :as params
+              :or {driver-args []
+                   driver-type :chrome}}] & body]
+  `(let [driver-type# ~driver-type
+         driver-args# ~driver-args
+         ~driver (webdriver.core/create-driver driver-type# driver-args#)]
+    (try
+      ~@body
+      (catch Exception e# (throw e#))
+      (finally (webdriver.core/driver-quit ~driver)))))
+
 (defmacro with-all-drivers
   "Same as with-driver but evaluates the forms in body agains all supported driver types.
    See examples in the unit tests"
