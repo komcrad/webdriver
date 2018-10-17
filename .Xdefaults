@@ -1,0 +1,21 @@
+ !! perl extensions
+ URxvt.perl-ext:             default,url-select,clipboard
+
+ ! url-select (part of urxvt-perls package)
+ URxvt.keysym.M-u:           perl:url-select:select_next
+ URxvt.url-select.autocopy:  true
+ URxvt.url-select.button:    2
+ URxvt.url-select.launcher:  chromium
+ URxvt.url-select.underline: true
+
+ ! Nastavuje kopirovani
+ URxvt.keysym.Shift-Control-V: perl:clipboard:paste
+ URxvt.keysym.Shift-Control-C:   perl:clipboard:copy
+
+ ! disable the stupid ctrl+shift 'feature'
+ URxvt.iso14755: false
+ URxvt.iso14755_52: false
+ URxvt.keysym.Shift-Control-V: perl:clipboard:paste
+
+ URxvt.iso14755: False
+ URxvt.perl-ext-common: default,clipboard
