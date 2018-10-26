@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file. This change
 - with-webdriver: a macro to replace with-driver with better syntax
 - poll-interval option for wait-for-element
 - visible? function
+### Changed
+- Updated version of chromedriver to 2.43
+- Updated geckdriver to 0.23.0
+- Updated circleci to use latest webdriver docker image containing chrome 70 and firefox 62
 ### Fixed
 - is-visible docstring
 
