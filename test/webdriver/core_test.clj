@@ -50,10 +50,10 @@
 
 (deftest ^:parallel driver-quit-test
   (testing "driver-quit"
-    (let [driver (create-driver :chrome)]
+    (let [driver (create-driver :chrome ["--headless"])]
       (driver-quit driver)
       (is (thrown? org.openqa.selenium.NoSuchSessionException (to driver "https://google.com"))))
-    (let [driver (create-driver :firefox)]
+    (let [driver (create-driver :firefox ["--headless"])]
       (driver-quit driver)
       (is (thrown? org.openqa.selenium.NoSuchSessionException (to driver "https://google.com"))))))
 
@@ -351,13 +351,13 @@
 
 (deftest ^:parallel alert-text-test
   (testing "alert-text"
-    (with-all-drivers []
+    (with-all-drivers ["--headless"]
       (execute-script driver "alert('hello world')")
       (is (= "hello world" (alert-text driver))))))
 
 (deftest ^:parallel alert-accept-test
   (testing "alert-accept"
-    (with-all-drivers []
+    (with-all-drivers ["--headless"]
       (to driver test-html-file-url)
       (execute-script driver "alert(alert('hello world'))")
       (is (= "hello world" (alert-text driver)))
@@ -368,7 +368,7 @@
 
 (deftest ^:parallel alert-dismiss-test
   (testing "alert-dismiss"
-    (with-all-drivers []
+    (with-all-drivers ["--headless"]
       (to driver test-html-file-url)
       (execute-script driver "alert(confirm('do you like jolly bears?'))")
       (is (= "do you like jolly bears?" (alert-text driver)))
