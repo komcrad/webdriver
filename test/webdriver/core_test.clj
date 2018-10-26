@@ -145,7 +145,13 @@
       (is (= "potato") (get-element-value (wait-for-element driver :id "input2" 5) :value))
       (click driver :id "btn3")
       (click driver :id "btn2")
-      (is (= "potato") (get-element-value (wait-for-element driver :id "input2") :value)))))
+      (is (= "potato") (get-element-value (wait-for-element driver :id "input2") :value))
+      (is (thrown? Exception
+                   (wait-for-element driver :id "notanelement" 0 500)))
+      (let [start-time (System/currentTimeMillis)]
+        (is (thrown? Exception
+                     (wait-for-element driver :id "notanelement" 1 1200)))
+        (is (< 1200 (- (System/currentTimeMillis) start-time)))))))
 
 (deftest ^:parallel wait-elm-dom-test
   (testing "wait-elm-dom"
