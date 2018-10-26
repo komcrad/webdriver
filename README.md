@@ -32,7 +32,15 @@ Now you can pass the driver object into the other functions in core to manipulat
 ```
 (to driver "https://google.com")
 (set-element driver :name "q" "silly memes")
-(click driver :xpath "//input[@value ='Google Search'][1]")
+(click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
+```
+
+From functional code:
+```
+(with-webdriver [driver :driver-type :chrome :driver-args ["--headless"]]
+  (to driver "https://google.com")
+  (set-element driver :name "q" "silly memes")
+  (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]")))
 ```
 
 etc...

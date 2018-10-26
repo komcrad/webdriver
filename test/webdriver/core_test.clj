@@ -26,6 +26,21 @@
       (is (= "self-signed.\nbadssl.com"
              (attr (get-element driver :xpath "//h1") :text))))))
 
+(deftest ^:parallel with-webdriver-test
+  (testing "with-webdriver"
+    (with-webdriver [d :driver-type :chrome :driver-args ["--headless"]]
+      (to d "https://google.com")
+      (set-element d :name "q" "silly memes")
+      (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
+      (is (clojure.string/includes? (attr (first (get-elements d :className "r")) :text)
+                                    "50 Hilarious Memes")))
+      (with-webdriver [d :driver-type :firefox :driver-args ["--headless"]]
+        (to d "https://google.com")
+        (set-element d :name "q" "silly memes")
+        (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
+        (is (clojure.string/includes? (attr (first (get-elements d :className "r")) :text)
+                                      "50 Hilarious Memes")))))
+
 (deftest ^:parallel to-test
   (testing "to"
     (with-all-drivers
