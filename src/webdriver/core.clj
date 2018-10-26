@@ -1,8 +1,10 @@
 (ns webdriver.core
   (:gen-class)
   (:import
+    [java.util.concurrent TimeUnit]
     [org.openqa.selenium.remote RemoteWebDriver]
-    [org.openqa.selenium WebElement])
+    [org.openqa.selenium WebElement]
+    [org.openqa.selenium.support.ui WebDriverWait ExpectedConditions])
   (:require [webdriver.driver-manager :as dm]
             [komcrad-utils.wait :refer [wait-for]]
             [clojure.java.io :as io]))
@@ -172,11 +174,14 @@
   (.implicitlyWait (.timeouts (.manage driver)) timeout (java.util.concurrent.TimeUnit/SECONDS)))
 
 (defn wait-for-element
-  "Explicitly waits for element to be clickable with a timeout of max-wait (seconds)"
+  "Explicitly waits for element to be clickable with a timeout of max-wait (seconds)
+   and a poll-interval (milliseconds)"
+  ([driver lookup-type lookup-string max-wait poll-interval]
+   (-> (new WebDriverWait driver max-wait)
+       (.pollingEvery poll-interval (TimeUnit/MILLISECONDS))
+       (.until (. ExpectedConditions elementToBeClickable (by lookup-type lookup-string)))))
   ([driver lookup-type lookup-string max-wait]
-    (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
-       (. org.openqa.selenium.support.ui.ExpectedConditions elementToBeClickable
-          (by lookup-type lookup-string))))
+   (wait-for-element driver lookup-type lookup-string max-wait 500))
   ([driver lookup-type lookup-string]
    (wait-for-element driver lookup-type lookup-string 10)))
 

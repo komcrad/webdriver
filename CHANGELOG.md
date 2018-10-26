@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [0.6.0 -2018-10-26]
 ### Added
 - with-webdriver: a macro to replace with-driver with better syntax
+- poll-interval option for wait-for-element
 
 ## [0.5.3 - 2018-09-21]
 ### Changed
