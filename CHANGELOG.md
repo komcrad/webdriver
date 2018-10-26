@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This change
 ### Added
 - with-webdriver: a macro to replace with-driver with better syntax
 - poll-interval option for wait-for-element
+- visible? function
+### Fixed
+- is-visible docstring
 
 ## [0.5.3 - 2018-09-21]
 ### Changed

@@ -173,7 +173,21 @@
       (is (is-visible driver :id "p2"))
       (is (not (is-visible driver :id "p4315151")))
       (is (is-visible (get-element driver :id "p2")))
-      (is (not (is-visible (get-element driver :id "fake news")))))))
+      (is (not (is-visible (get-element driver :id "fake news"))))
+      (is (not (is-visible driver :id "disabledbtn")))
+      (is (not (is-visible (get-element driver :id "disabledbtn")))))))
+
+(deftest ^:parallel visible?-test
+  (testing "visible?"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (visible? driver :id "p2"))
+      (is (visible? (get-element driver :id "p2")))
+      (is (not (visible? driver :id "p2fakeelm")))
+      (is (not (visible? (get-element driver :id "p2fakeelm"))))
+      (is (visible? driver :id "disabledbtn"))
+      (is (visible? (get-element driver :id "disabledbtn"))))))
 
 (deftest ^:parallel input-text-test
   (testing "input-text"

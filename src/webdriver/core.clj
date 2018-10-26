@@ -194,7 +194,7 @@
    (wait-elm-dom driver lookup-type lookup-string 10)))
 
 (defn is-visible
-  "Returns true if element is visible"
+  "Returns true if element is visible and enabled"
   ([element]
   (try (and (.isEnabled element) (.isDisplayed element))
        (catch Exception e false)))
@@ -202,6 +202,15 @@
   ([driver lookup-type lookup-string]
   (try (is-visible (get-element driver lookup-type lookup-string))
        (catch Exception e false))))
+
+(defn visible?
+  "Returns true if element is visible"
+  ([elm]
+   (try (.isDisplayed elm)
+        (catch Exception e false)))
+  ([driver lookup-type lookup-string]
+   (try (visible? (get-element driver lookup-type lookup-string))
+        (catch Exception e false))))
 
 (defn input-text
   "sets the value of a text input. If clear-element, element will be cleared before
@@ -262,7 +271,6 @@
    each list becomes a key value pair where key is an element identifier
    and value is the value that element will be set to
    Eg: (set-elms driver :id [:input1 \"hello\" :input2 \"world\"])
-  
    if you pass in only a driver and coll, every odd element should be an WebElement"
   ([driver coll]
    {:pre [(even? (count coll))]}
