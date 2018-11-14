@@ -230,7 +230,13 @@
 (defn set-file-input
   "Sets file input's path"
   [element s]
-  (send-keys element s))
+  (if (not (visible? element))
+    (let [driver (.getWrappedDriver element)]
+        (execute-script driver "arguments[0].style.display = 'block';" element)
+        (wait-for #(visible? element) 1000 50)
+        (send-keys element s)
+        (execute-script driver "arguments[0].style.display = 'none';" element))
+    (send-keys element s)))
 
 (defn set-element
   "sets element e to value s. For select or input elements"
