@@ -1,7 +1,9 @@
 (ns webdriver.core-test
   (:require [clojure.test :refer :all]
             [webdriver.core :refer :all]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as s]
+            [komcrad-utils.io :as kio]))
 (def test-html-file-url (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
 
 (deftest ^:parallel create-driver-test
@@ -32,13 +34,13 @@
       (to d "https://google.com")
       (set-element d :name "q" "silly memes")
       (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
-      (is (clojure.string/includes? (attr (first (get-elements d :className "r")) :text)
+      (is (s/includes? (attr (first (get-elements d :className "r")) :text)
                                     "50 Hilarious Memes")))
       (with-webdriver [d :driver-type :firefox :driver-args ["--headless"]]
         (to d "https://google.com")
         (set-element d :name "q" "silly memes")
         (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
-        (is (clojure.string/includes? (attr (first (get-elements d :className "r")) :text)
+        (is (s/includes? (attr (first (get-elements d :className "r")) :text)
                                       "50 Hilarious Memes")))))
 
 (deftest ^:parallel to-test
@@ -199,6 +201,20 @@
       (input-text driver (get-element driver :id "input1") "world" false)
       (is (= "hello thereworld" (get-element-value driver :id "input1" :value))))))
 
+(deftest ^:parallel set-file-input-test
+  (testing "set-file-input"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (kio/with-tf [temp]
+        (let [temp-path (.getCanonicalPath temp)
+              temp-name (.getName temp)]
+        (set-file-input (get-element driver :id "file1") temp-path)
+        (set-file-input (get-element driver :id "file2") temp-path)
+        (is (s/includes? (attr driver :id "file1" :value) temp-name))
+        (is (s/includes? (attr driver :id "file2" :value) temp-name))
+        (is (s/includes? (attr driver :id "file2" :style) "none;")))))))
+
 (deftest ^:parallel set-element-test
   (testing "set-element"
     (with-all-drivers
@@ -297,11 +313,11 @@
   (testing "wait-click"
     (with-all-drivers ["--headless"]
       (to driver test-html-file-url)
-      (let [time1 (Float/parseFloat (nth (clojure.string/split
+      (let [time1 (Float/parseFloat (nth (s/split
                                            (with-out-str
                                              (time (try (wait-click driver :name "fakelement")
                                                         (catch Exception e)))) #" ") 2))
-            time2 (Float/parseFloat (nth (clojure.string/split
+            time2 (Float/parseFloat (nth (s/split
                                            (with-out-str
                                              (time (try (wait-click driver :name "fakelement" 5)
                                                         (catch Exception e)))) #" ") 2))]

@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
+## [0.6.1 - 2018-11-14]
+### Fixed
+- Firefox is now able to set-file-input
 
-## [0.6.0 -2018-10-26]
+## [0.6.0 - 2018-10-26]
 ### Added
 - with-webdriver: a macro to replace with-driver with better syntax
 - poll-interval option for wait-for-element

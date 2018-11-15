@@ -3,8 +3,7 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<script>
-		function addInput2() {
-			var elm = document.createElement("input");
+		function addInput2() { var elm = document.createElement("input");
 			elm.setAttribute("id", "input2");
 			elm.setAttribute("value", "potato");
 			setTimeout(function() {document.getElementById("main").appendChild(elm);}, 3000);
@@ -142,6 +141,8 @@
 		<button id="btn4" onclick=addInput6()>add input3</button>
 		<button id="btn5" onclick=addInvisibleInputThreeSecondsFromNow()>add input7</button>
 		<button disabled id="disabledbtn">disabled button</button>
+	<input type="file" id="file1">
+	<input type="file" id="file2" style="display: none;">
     <input type="text" id="input3" />
     <input type="text" id="input4" />
     <input type="text" id="input5" />
