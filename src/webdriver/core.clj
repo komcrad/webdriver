@@ -57,6 +57,11 @@
   "Navigates driver to the given url"
   ([driver url] (. driver get url)))
 
+(defn to-localhost
+  "Navigate driver to localhost, ignoring thrown exceptions"
+  [driver]
+  (try (to driver "http://localhost") (catch Exception e)))
+
 (defn driver-quit
   "calls quit on driver"
   ([driver]
