@@ -375,27 +375,41 @@
   (testing "alert-accept"
     (with-all-drivers ["--headless"]
       (to driver test-html-file-url)
-      (execute-script driver "alert(alert('hello world'))")
-      (is (= "hello world" (alert-text driver)))
+      (execute-script driver
+        (str "var node = document.createElement('span');"
+             "var textnode = document.createTextNode(alert('hi'));"
+             "node.appendChild(textnode);"
+             "node.setAttribute('id', 'alert-result');"
+             "document.getElementsByTagName('body')[0]"
+             ".appendChild(node);"))
+      (is (= "hi" (alert-text driver)))
       (alert-accept driver)
-      (is (= "undefined" (alert-text driver)))
-      (alert-accept driver)
-      (is (= nil (click driver :id "btn1"))))))
+      (is (= "undefined" (attr driver :id "alert-result" :text))))))
 
 (deftest ^:parallel alert-dismiss-test
   (testing "alert-dismiss"
     (with-all-drivers ["--headless"]
       (to driver test-html-file-url)
-      (execute-script driver "alert(confirm('do you like jolly bears?'))")
-      (is (= "do you like jolly bears?" (alert-text driver)))
+      (execute-script driver
+        (str "var node = document.createElement('span');"
+             "var textnode = document.createTextNode(confirm('hi'));"
+             "node.appendChild(textnode);"
+             "node.setAttribute('id', 'alert-result');"
+             "document.getElementsByTagName('body')[0]"
+             ".appendChild(node);"))
+      (is (= "hi" (alert-text driver)))
       (alert-accept driver)
-      (is (= "true" (alert-text driver)))
-      (alert-accept driver)
-      (execute-script driver "alert(confirm('do you like jolly bears?'))")
-      (is (= "do you like jolly bears?" (alert-text driver)))
+      (is (= "true" (attr driver :id "alert-result" :text)))
+      (execute-script driver
+        (str "var node = document.createElement('span');"
+             "var textnode = document.createTextNode(confirm('hey'));"
+             "node.appendChild(textnode);"
+             "node.setAttribute('id', 'alert-result2');"
+             "document.getElementsByTagName('body')[0]"
+             ".appendChild(node);"))
+      (is (= "hey" (alert-text driver)))
       (alert-dismiss driver)
-      (is (= "false" (alert-text driver)))
-      (alert-accept driver))))
+      (is (= "false" (attr driver :id "alert-result2" :text))))))
 
 (deftest ^:parallel iframe-test
   (testing "iframe"
