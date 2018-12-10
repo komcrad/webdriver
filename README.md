@@ -48,6 +48,9 @@ etc...
 core.clj contains functions to handle common browser tasks. You can either read through that or checkout tests/webdriver/core_test.clj for unit test examples.
 
 ## Tested versions of firefox and chrome
+- unreleased
+  - Firefox 63.0.3
+  - Google Chrome 71.0.3578.80
 - webdriver 0.6.0
   - Firefox: 62.0.3
   - Google Chrome 70.0.3538.67
