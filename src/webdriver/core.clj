@@ -1,13 +1,14 @@
 (ns webdriver.core
   (:gen-class)
   (:import
-    [java.util.concurrent TimeUnit]
-    [org.openqa.selenium.remote RemoteWebDriver]
+    [java.util.concurrent TimeUnit] [org.openqa.selenium.remote RemoteWebDriver]
     [org.openqa.selenium WebElement]
     [org.openqa.selenium.support.ui WebDriverWait ExpectedConditions])
   (:require [webdriver.driver-manager :as dm]
             [komcrad-utils.wait :refer [wait-for]]
-            [clojure.java.io :as io]))
+            [komcrad-utils.string :as ks]
+            [clojure.java.io :as io]
+            [hiccup.core :as h]))
 
 (defn create-driver
   "creates a chrome or firefox driver based on passing in :chrome or :firefox.
@@ -97,8 +98,8 @@
 (defn get-element
   "returns the first element matching lookup-type and lookup-string"
   ([driver lookup-type lookup-string]
-  (try (nth (get-elements driver lookup-type lookup-string) 0)
-       (catch Exception e nil))))
+   (try (nth (get-elements driver lookup-type lookup-string) 0)
+        (catch Exception e nil))))
 
 (defn get-visible-element
   "returns the first visible elmeent matching lookip-type and lookup-string"
@@ -440,3 +441,22 @@
   (io/copy (.getScreenshotAs (cast org.openqa.selenium.TakesScreenshot driver)
                              (org.openqa.selenium.OutputType/FILE))
            (io/file output)))
+
+(defn html
+  "A wrapper around hiccup's html macro to avoid requiring yet another require"
+  [options & content]
+  (h/html options content))
+
+(defn- append-child-js [html]
+  (str "arguments[0].innerHTML += '" html "';"))
+
+(defn insert-html
+  "Appends given html to elm.. elm is the parent and html will be the child"
+  [driver elm html]
+  (execute-script driver (append-child-js html) elm))
+
+(defn delete-elm
+  ([driver elm]
+   (execute-script driver (str "arguments[0].parentNode.removeChild(arguments[0]);") elm))
+  ([driver lookup-type lookup-string]
+   (delete-elm driver (get-element driver lookup-type lookup-string))))

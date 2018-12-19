@@ -450,3 +450,28 @@
       (is (= "I'm silly" (cookie driver "sillynonsensecookie")))
       (cookie driver "sillynonsensecookie" "I'm silly nonsense")
       (is (= "I'm silly nonsense" (cookie driver "sillynonsensecookie"))))))
+
+(deftest insert-html-test
+  (testing "insert-html"
+    (with-all-drivers ["--headless"]
+      (to driver "https://google.com")
+      (insert-html driver (get-element driver :id "viewport")
+                   (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
+      (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
+      (is (= "bobloblaw" (attr driver :xpath
+                               "//div[@id='viewport']/h1[@id='bobloblaw']" :text))))))
+
+(deftest delete-elm-test
+  (testing "delete-elm"
+    (with-all-drivers ["--headless"]
+      (to driver "https://google.com")
+      (insert-html driver (get-element driver :id "viewport")
+                   (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
+      (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
+      (delete-elm driver (get-element driver :id "bobloblaw"))
+      (is (nil? (get-element driver :id "bobloblaw")))
+      (insert-html driver (get-element driver :id "viewport")
+                   (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
+      (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
+      (delete-elm driver :id "bobloblaw")
+      (is (nil? (get-element driver :id "bobloblaw"))))))
