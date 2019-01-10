@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This change
 ### Added
 - insert-html and delete-elm functions for basic dom manipulation
 - html function: a wrapper around the html macro in the hiccup library
+- options function for getting available options of a select element
 
 ## [0.6.2 - 2018-11-21]
 ### Fixed/Added

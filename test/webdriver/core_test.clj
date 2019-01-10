@@ -271,6 +271,16 @@
         (is (= "span 1" (attr elm :text)))
         (is (= "span 1" (attr driver :name "span1" :text)))))))
 
+(deftest options-test
+  (testing "options"
+    (with-all-drivers ["--headless"]
+      (to driver "https://google.com")
+      (insert-html driver (get-element driver :id "viewport")
+                   (html [:select {:id "options"} [:options [:option "option 1"]
+                                                   [:option "option 2"]]]))
+      (is (= ["option 1" "option 2"] (options driver :id "options")))
+      (is (nil? (options driver :id "viewport"))))))
+
 (deftest ^:parallel css-test
   (testing "css"
     (with-all-drivers
