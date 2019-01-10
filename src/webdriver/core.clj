@@ -303,6 +303,15 @@
   ([driver lookup-type lookup-string attribute]
    (attr (get-element driver lookup-type lookup-string) attribute)))
 
+(defn options
+  "returns a vector of the options available to a select element"
+  ([elm]
+   (try
+     (vec (map #(.getText %) (.getOptions (new org.openqa.selenium.support.ui.Select elm))))
+     (catch Exception e nil)))
+  ([driver lookup-type lookup-string]
+   (options (get-element driver lookup-type lookup-string))))
+
 (defn css
   "returns the value of a webelement's css value attribute"
   ([webelement attribute]
