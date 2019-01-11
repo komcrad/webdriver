@@ -3,6 +3,11 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<script>
+		function expand() {
+			let elm = document.getElementById("transition");
+			let i = parseInt(elm.style.width) + 100;
+			elm.style.width = i + "px";
+		}
 		function addInput2() { var elm = document.createElement("input");
 			elm.setAttribute("id", "input2");
 			elm.setAttribute("value", "potato");
@@ -155,6 +160,7 @@
 	<iframe id="iframeA" src="iframeA.html" /></iframe>
 	<iframe id="iframeB" src="iframeB.html" /></iframe>
 	</div>
+	<div id="transition" onclick="expand()" style="width: 100px"></div>
 	<div id="buffer" />
 	<footer id="footer">
 		<span>A shroud</span>
