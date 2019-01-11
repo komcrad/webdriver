@@ -304,7 +304,8 @@
    (attr (get-element driver lookup-type lookup-string) attribute)))
 
 (defn options
-  "returns a vector of the options available to a select element"
+  "returns a vector of the options available to elm.
+   returns nil if elm is not a select element."
   ([elm]
    (try
      (vec (map #(.getText %) (.getOptions (new org.openqa.selenium.support.ui.Select elm))))
@@ -469,3 +470,33 @@
    (execute-script driver (str "arguments[0].parentNode.removeChild(arguments[0]);") elm))
   ([driver lookup-type lookup-string]
    (delete-elm driver (get-element driver lookup-type lookup-string))))
+
+(defonce transitionend-js
+  (str "window.transitionEnd = function () {"
+       "var node = document.createElement('span');"
+       "var text = document.createTextNode('done');"
+       "node.appendChild(text);"
+       "node.setAttribute('id', 'transition-end');"
+       "document.body.appendChild(node);}; "
+       "arguments[0].addEventListener(\"transitionend\", transitionEnd);"))
+
+(defn wait-for-trans
+  "waits for transitions of elm triggered by f to finish.
+   timeout (milliseconds) should be longer than elm's transition duration
+   expected-transitions is an int that should represent the number of transitions elm
+   will go through when trigger f is executed"
+  ([driver elm timeout expected-transitions f]
+    (execute-script driver transitionend-js elm)
+    (f)
+    (when
+      (wait-for
+        #(<= expected-transitions (count (get-elements driver :id "transition-end")))
+        timeout 100)
+      (doseq [elm (get-elements driver :id "transition-end")]
+        (delete-elm driver elm)))
+    (execute-script
+      driver "arguments[0].removeEventListener('transitionend', transitionEnd);" elm))
+  ([driver elm timeout f]
+   (wait-for-trans driver elm timeout 1 f))
+  ([driver elm f]
+   (wait-for-trans driver elm 10000 f)))

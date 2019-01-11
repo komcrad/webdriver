@@ -14,3 +14,11 @@ body {
 	right: 0;
 	height: 5vh;
 }
+
+#transition {
+  width: 100px;
+  height: 100px;
+  background: red;
+  -webkit-transition: width .5s; /* For Safari 3.1 to 6.0 */
+  transition: width .5s;
+}

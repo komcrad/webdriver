@@ -485,3 +485,16 @@
       (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
       (delete-elm driver :id "bobloblaw")
       (is (nil? (get-element driver :id "bobloblaw"))))))
+
+(deftest wait-for-trans-test
+  (testing "wait-for-trans"
+    (with-all-drivers ["--headless"]
+      (to driver test-html-file-url)
+      (click driver :id "transition")
+      (is (not (= "200px" (css driver :id "transition" "width"))))
+      (Thread/sleep 1000)
+      (let [now (System/currentTimeMillis)]
+        (wait-for-trans driver (get-element driver :id "transition")
+                                 #(click driver :id "transition"))
+        (is (= "300px" (css driver :id "transition" "width")))
+        (is (> 2000 (- (System/currentTimeMillis) now)))))))
