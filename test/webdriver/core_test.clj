@@ -86,6 +86,29 @@
       (to driver test-html-file-url)
       (is (= "not really hidden button" (.getText (get-visible-element driver :id "hiddenbutton")))))))
 
+(deftest select-elm-test
+  (testing "select-elm"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= org.openqa.selenium.support.ui.Select
+             (type (select-elm (get-element driver :id "select1")))))
+      (is (thrown? org.openqa.selenium.support.ui.UnexpectedTagNameException 
+                   (select-elm driver :id "input1"))))))
+
+(deftest select-elm-val-test
+  (testing "select-elm-val"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= "Option 1" (select-elm-val driver :id "select1")))
+      (is (= "Option 1" (select-elm-val (get-element driver :id "select1"))))
+      (is (= "Option 1" (select-elm-val (select-elm driver :id "select1"))))
+      (set-element driver :id "select1" "Option 2")
+      (is (= "Option 2" (select-elm-val driver :id "select1")))
+      (is (= "Option 2" (select-elm-val (get-element driver :id "select1"))))
+      (is (= "Option 2" (select-elm-val (select-elm driver :id "select1")))))))
+
 (deftest ^:parallel focused-element-test
   (testing "focused-element")
   (with-all-drivers

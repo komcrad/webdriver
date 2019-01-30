@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [Unreleased]
+## Added
+- select-elm functions for dealing with select elements
+
 ## [0.7.0 - 2019-01-10]
 ### Added
 - insert-html and delete-elm functions for basic dom manipulation
