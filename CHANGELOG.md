@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. This change
 
 ## [Unreleased]
 ## Added
+- sibling and parent functions for traversing the dom
 - select-elm functions for dealing with select elements
 
 ## [0.7.0 - 2019-01-10]
