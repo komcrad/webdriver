@@ -111,6 +111,36 @@
              (recur (rest elements))) nil))
         (catch Exception e nil))))
 
+(defn siblings
+  "returns a map containing colls with the :preceding and :following
+   sibling elements of e"
+  ([e]
+   {:preceding (vec (.findElements e (by :xpath "preceding-sibling::*")))
+    :following (vec (.findElements e (by :xpath "following-sibling::*")))})
+  ([driver lookup-type lookup-string]
+   (siblings (get-element driver lookup-type lookup-string))))
+
+(defn pre-sib
+  "returns a coll containing the preceding sibling elements of e"
+  ([e]
+   (last (:preceding (siblings e))))
+  ([driver lookup-type lookup-string]
+   (pre-sib (get-element driver lookup-type lookup-string))))
+
+(defn post-sib
+  "returns a coll containing the following sibling elements of e"
+  ([e]
+   (first (:following (siblings e))))
+  ([driver lookup-type lookup-string]
+   (post-sib (get-element driver lookup-type lookup-string))))
+
+(defn parent
+  "returns the parent of e"
+  ([e]
+   (.findElement e (by :xpath "parent::*")))
+  ([driver lookup-type lookup-string]
+   (parent (get-element driver lookup-type lookup-string))))
+
 (defn select-elm
   ([e]
    (new org.openqa.selenium.support.ui.Select e))

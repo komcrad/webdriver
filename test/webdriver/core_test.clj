@@ -86,6 +86,43 @@
       (to driver test-html-file-url)
       (is (= "not really hidden button" (.getText (get-visible-element driver :id "hiddenbutton")))))))
 
+(deftest siblings-test
+  (testing "siblings"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= ["sib1" "sib2" "sib4" "sib5"]
+             (vec (map #(attr % :id)
+                       (flatten (vals (siblings driver :id "sib3")))))))
+      (is (= "sib5" (attr (first (:following (siblings driver :id "sib4")))
+                          :id)))
+      (is (= "sib1" (attr (first (:preceding (siblings driver :id "sib2")))
+                          :id))))))
+
+(deftest pre-sib-test
+  (testing "pre-sib"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= "sib1" (attr (pre-sib driver :id "sib2") :id)))
+      (is (nil? (pre-sib driver :id "sib1"))))))
+
+(deftest post-sib-test
+  (testing "pre-sib"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= "sib5" (attr (post-sib driver :id "sib4") :id)))
+      (is (nil? (post-sib driver :id "sib5"))))))
+
+(deftest parent-test
+  (testing "parent"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (= "siblings" (attr (parent driver :id "sib4") :id)))
+      (is (= "siblings" (attr (parent driver :id "sib3") :id))))))
+
 (deftest select-elm-test
   (testing "select-elm"
     (with-all-drivers
