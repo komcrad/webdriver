@@ -111,6 +111,20 @@
              (recur (rest elements))) nil))
         (catch Exception e nil))))
 
+(defn select-elm
+  ([e]
+   (new org.openqa.selenium.support.ui.Select e))
+  ([driver lookup-type lookup-string]
+   (select-elm (get-element driver lookup-type lookup-string))))
+
+(defn select-elm-val
+  ([e]
+   (let [elm (if-not (= org.openqa.selenium.support.ui.Select (type e))
+               (select-elm e) e)]
+     (.getText (.getFirstSelectedOption elm))))
+  ([driver lookup-type lookup-string]
+   (select-elm-val (get-element driver lookup-type lookup-string))))
+
 (defn q
   "Finds and returns webelement with name, id, tagName, className, linkText, text, or xpath.
    Note: not great to use if using implicit waits."
