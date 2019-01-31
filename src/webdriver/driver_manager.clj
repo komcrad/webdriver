@@ -6,7 +6,7 @@
   [args]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
-  (. (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) version "2.43") setup)
+  (. (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) version "2.45") setup)
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
     (. options addArguments (concat args ["--window-size=1920x1080"]))
@@ -23,7 +23,7 @@
   "creates a firefoxdriver and passes in vector args as command line arguments"
   [args]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
-  (. System setProperty "wdm.geckoDriverVersion" "0.23.0")
+  (. System setProperty "wdm.geckoDriverVersion" "0.24.0")
   (. System setProperty "webdriver.firefox.marionette" "true")
   (. System setProperty "webdriver.firefox.logfile" ".webdrivers/gecko.log")
   (. (. io.github.bonigarcia.wdm.FirefoxDriverManager getInstance) setup)
