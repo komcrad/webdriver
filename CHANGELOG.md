@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.8.0 2018-01-30]
 ## Added
 - sibling and parent functions for traversing the dom
 - select-elm functions for dealing with select elements
