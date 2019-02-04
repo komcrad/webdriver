@@ -243,6 +243,14 @@
   ([driver lookup-type lookup-string]
    (wait-elm-dom driver lookup-type lookup-string 10)))
 
+(defn enabled?
+  ([elm]
+   (try (.isEnabled elm)
+        (catch Exception e false)))
+  ([driver lookup-type lookup-string]
+   (try (enabled? (get-element driver lookup-type lookup-string))
+        (catch Exception e false))))
+
 (defn is-visible
   "Returns true if element is visible and enabled"
   ([element]

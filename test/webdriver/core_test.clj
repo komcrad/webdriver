@@ -227,6 +227,16 @@
       (is (= "are you still there?" (attr (wait-elm-dom driver :id "input7") :value)))
       (is (thrown? Exception (wait-elm-dom driver :id "notanelement" 0))))))
 
+(deftest enabled?-test
+  (testing "enabled?"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (not (enabled? driver :id "disabledbtn")))
+      (is (not (enabled? (get-element driver :id "disabledbtn"))))
+      (is (enabled? driver :id "btn5"))
+      (is (enabled? (get-element driver :id "btn5"))))))
+
 (deftest ^:parallel is-visible-test
   (testing "is-visible"
     (with-all-drivers

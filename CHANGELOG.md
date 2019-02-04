@@ -1,12 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.8.1 2018-01-31]
+## [0.9.0 2019-02-04]
+## Added
+- enabled? function so people don't have to use java interop or the is-visible function to see if an element is enabled
+
+## [0.8.1 2019-01-31]
 ## Updated
 - browser version used for circle ci
 - driver versions so newer browsers will be supported
 
-## [0.8.0 2018-01-30]
+## [0.8.0 2019-01-30]
 ## Added
 - sibling and parent functions for traversing the dom
 - select-elm functions for dealing with select elements
