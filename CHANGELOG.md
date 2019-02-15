@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.10.0 2019-02-15]
+## Added
+- better file download support
+
 ## [0.9.0 2019-02-04]
 ## Added
 - enabled? function so people don't have to use java interop or the is-visible function to see if an element is enabled
