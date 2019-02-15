@@ -7,25 +7,56 @@
   (:require [webdriver.driver-manager :as dm]
             [komcrad-utils.wait :refer [wait-for]]
             [komcrad-utils.string :as ks]
+            [komcrad-utils.io :as kio]
             [clojure.java.io :as io]
+            [clojure.data.json :as json]
             [hiccup.core :as h]))
 
 (defn create-driver
-  "creates a chrome or firefox driver based on passing in :chrome or :firefox.
-   args would be a verctor for command line arguments like [\"--headless\"]"
+  "creates a chrome or firefox driver based on passing in map m.
+   Supported options: :driver-type, :driver-args, and :download-dir.
+   Eg: (create-driver {:driver-type :chrome :driver-args [\"--headless\"]
+                       :download-dir \"/tmp/folder\"})"
+  ([m]
+   (. (. (. java.util.logging.LogManager getLogManager) getLogger "")
+      setLevel (java.util.logging.Level/OFF))
+   (cond
+     (= :chrome m)
+       (dm/create-chrome-driver {:driver-args ["--headless"]})
+     (= :firefox m)
+       (dm/create-firefox-driver {:driver-args ["--headless"]})
+     (= :chrome (:driver-type m))
+       (dm/create-chrome-driver m)
+     (= :firefox (:driver-type m))
+       (dm/create-firefox-driver m)
+     :else (throw (Exception. (str "unsupported options passed "
+                                   "to create-driver")))))
   ([driver-type args]
-  (. (. (. java.util.logging.LogManager getLogManager) getLogger "") setLevel (java.util.logging.Level/OFF))
-  (cond
-    (= :chrome driver-type)
-      (dm/create-chrome-driver args)
-    (= :firefox driver-type)
-      (dm/create-firefox-driver args)
-    :else (throw (Exception. (str "driver-type " driver-type " is unsupported.\n"
-                                  "Supported values:\n"
-                                  ":chrome, :firefox")))))
-  ([driver-type]
-   (create-driver driver-type ["--headless"])))
+   (create-driver {:driver-type driver-type :driver-args args})))
 
+(defn download-dir
+  "returns the download directory path of driver as a string"
+  [driver]
+  (if (= org.openqa.selenium.firefox.FirefoxDriver (type driver))
+    (let [data-dir (.getCapability (.getCapabilities driver) "moz:profile")
+          prefs (slurp (str data-dir "/prefs.js"))]
+      (second
+        (ks/between-seq
+          (first (filter #(clojure.string/includes? % "download.dir")
+                         (re-seq #"user_pref\(.*\);" prefs))) "\"" "\"")))
+    (let [data-dir (.get (.getCapability (.getCapabilities driver) "chrome")
+                         "userDataDir")]
+      (get-in (json/read-str (slurp (str data-dir "/Default/Preferences")))
+              ["download" "default_directory"]))))
+
+(defn wait-for-download
+  "waits for download to finish up to timeout (seconds).
+   returns file if download finishes before timeout, else nil."
+  [driver file-name timeout]
+  (wait-for (fn [] (first (filter #(and (= file-name (.getName %))
+                                        (< 0 (.length %)))
+                            (kio/file-list (download-dir driver)))))
+            (* timeout 1000) 100))
 
 (defmacro with-driver
   "creates a driver, executes the forms in body, and closes the driver.
@@ -35,13 +66,17 @@
         (list 'try (cons 'do body) '(catch Exception e (throw e)) '(finally (driver-quit driver))))))
 
 (defmacro with-webdriver
-  [[driver & {:keys [driver-type driver-args]
+  [[driver & {:keys [driver-type driver-args download-dir]
               :as params
               :or {driver-args []
-                   driver-type :chrome}}] & body]
+                   driver-type :chrome
+                   download-dir nil}}] & body]
   `(let [driver-type# ~driver-type
          driver-args# ~driver-args
-         ~driver (webdriver.core/create-driver driver-type# driver-args#)]
+         download-dir# ~download-dir
+         ~driver (webdriver.core/create-driver {:driver-type driver-type#
+                                                :driver-args driver-args#
+                                                :download-dir download-dir#})]
     (try
       ~@body
       (catch Exception e# (throw e#))

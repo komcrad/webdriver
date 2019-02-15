@@ -3,6 +3,7 @@
             [webdriver.core :refer :all]
             [clojure.java.io :as io]
             [clojure.string :as s]
+            [digest :as digest]
             [komcrad-utils.io :as kio]))
 (def test-html-file-url (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
 
@@ -15,12 +16,23 @@
     (let [driver (create-driver :chrome ["--headless"])]
       (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
       (driver-quit driver))
-    (let [driver (create-driver :firefox ["--headless"])]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+    (let [driver (create-driver :chrome)]
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
+      (driver-quit driver))
+    (let [driver (create-driver {:driver-type :chrome
+                                 :driver-args ["--headless"]})]
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
       (driver-quit driver))
     (let [driver (create-driver :firefox ["--headless"])]
       (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+      (driver-quit driver))
+    (let [driver (create-driver :firefox)]
+      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
       (driver-quit driver)))
+    (let [driver (create-driver {:driver-type :firefox
+                                 :driver-args ["--headless"]})]
+      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+      (driver-quit driver))
   (testing "headless-insecure-certs"
     (with-all-drivers
       ["--headless"]
@@ -28,9 +40,63 @@
       (is (= "self-signed.\nbadssl.com"
              (attr (get-element driver :xpath "//h1") :text))))))
 
+(deftest download-dir-test
+  (testing "download-dir"
+    (kio/with-tmps [dir (kio/tmp-folder)]
+      (with-webdriver [driver :driver-type :chrome
+                       :driver-args []
+                       :download-dir (.getCanonicalPath dir)]
+        (is (= (.getCanonicalPath dir) (download-dir driver)))
+        (to driver "https://www.thinkbroadband.com/download")
+        (Thread/sleep 1000)
+        (click (second
+                 (get-elements
+                   driver :xpath
+                   (str "//a[@href='http://ipv4.download."
+                        "thinkbroadband.com/5MB.zip']"))))
+        (let [df (wait-for-download driver "5MB.zip" 30)]
+          (is df)
+          (is (= "b3215c06647bc550406a9c8ccc378756"
+                 (digest/md5 df)))
+          (kio/delete-file df)))
+      (with-webdriver [driver :driver-type :firefox
+                       :driver-args ["--headless"]
+                       :download-dir (.getCanonicalPath dir)]
+        (is (= (.getCanonicalPath dir) (download-dir driver)))
+        (to driver "https://www.thinkbroadband.com/download")
+        (Thread/sleep 1000)
+        (click (second
+                 (get-elements
+                   driver :xpath
+                   (str "//a[@href='http://ipv4.download."
+                        "thinkbroadband.com/5MB.zip']"))))
+        (let [df (wait-for-download driver "5MB.zip" 30)]
+          (is df)
+          (is (= "b3215c06647bc550406a9c8ccc378756"
+                 (digest/md5 df)))
+          (kio/delete-file df))))))
+
+(deftest wait-for-download-test
+  (testing "wait-for-download"
+    (with-all-drivers
+      []
+      (to driver "https://www.thinkbroadband.com/download")
+      (Thread/sleep 1000)
+      (click (second
+               (get-elements
+                 driver :xpath
+                 (str "//a[@href='http://ipv4.download."
+                      "thinkbroadband.com/5MB.zip']"))))
+      (let [df (wait-for-download driver "5MB.zip" 30)]
+        (is df)
+        (is (= "b3215c06647bc550406a9c8ccc378756"
+               (digest/md5 df)))
+        (kio/delete-file df)))))
+
 (deftest ^:parallel with-webdriver-test
   (testing "with-webdriver"
-    (with-webdriver [d :driver-type :chrome :driver-args ["--headless"]]
+    (with-webdriver [d :driver-type :chrome
+                     :driver-args ["--headless"]]
       (to d "https://google.com")
       (set-element d :name "q" "silly memes")
       (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
