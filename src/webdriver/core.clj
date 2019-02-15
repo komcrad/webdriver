@@ -244,6 +244,7 @@
    (wait-elm-dom driver lookup-type lookup-string 10)))
 
 (defn enabled?
+  "Returns true if element is enabled."
   ([elm]
    (try (.isEnabled elm)
         (catch Exception e false)))
