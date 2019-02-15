@@ -327,6 +327,17 @@
       (is (visible? driver :id "disabledbtn"))
       (is (visible? (get-element driver :id "disabledbtn"))))))
 
+(deftest ^:parallel selected?-test
+  (testing "visible?"
+    (with-all-drivers
+      ["--headless"]
+      (to driver test-html-file-url)
+      (is (not (selected? driver :id "input8")))
+      (is (not (selected? (get-element driver :id "input8"))))
+      (click driver :id "input8")
+      (is (selected? driver :id "input8"))
+      (is (selected? (get-element driver :id "input8"))))))
+
 (deftest ^:parallel input-text-test
   (testing "input-text"
     (with-all-drivers
