@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [0.10.0 2019-02-15]
 ## Added
 - better file download support
+- selected? function
 
 ## [0.9.0 2019-02-04]
 ## Added

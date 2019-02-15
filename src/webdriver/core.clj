@@ -306,6 +306,15 @@
    (try (visible? (get-element driver lookup-type lookup-string))
         (catch Exception e false))))
 
+(defn selected?
+  "Returns true if element is selected"
+  ([elm]
+   (try (.isSelected elm)
+        (catch Exception e false)))
+  ([driver lookup-type lookup-string]
+   (try (selected? (get-element driver lookup-type lookup-string))
+        (catch Exception e false))))
+
 (defn input-text
   "sets the value of a text input. If clear-element, element will be cleared before
   setting the text input"
