@@ -63,6 +63,10 @@ RUN export CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chrome
 # install libgconf-2-4 manually since chrome no longer pulls it in automatically
 RUN sudo apt-get install -y libgconf-2-4
 
+# setup recording stuff
+RUN sudo apt-get install -y ffmpeg tmux
+COPY scripts/record /usr/local/bin/record
+
 # start xvfb automatically to avoid needing to express in circle.yml
 ENV DISPLAY :99
 RUN printf '#!/bin/sh\nXvfb :99 -screen 0 1280x1024x24 &\nexec "$@"\n' > /tmp/entrypoint \

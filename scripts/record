@@ -1,0 +1,17 @@
+#!/bin/bash
+vidoutput=/tmp/output.mp4
+
+OPTIND=1
+while getopts "o:" opt; do
+	case "$opt" in
+    o) vidoutput=$OPTARG
+	   shift 2;;
+   esac
+done
+rm -f $vidoutput
+Xvfb :44 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+bash -c 'sleep 2; tmux new-session -d -s screenrecording "ffmpeg -y -f x11grab -video_size 1920x1080 -i :44 -codec:v libx264 -r 60 '$vidoutput'"' &
+DISPLAY=:44 "$@"
+tmux send-keys -t screenrecording q
+sleep 5
+pkill Xvfb
