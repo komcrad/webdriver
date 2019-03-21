@@ -49,7 +49,9 @@ core.clj contains functions to handle common browser tasks. You can either read 
 
 ## Tested versions of firefox and chrome
 - webdriver 0.10.0
+  - Firefox 66.0
   - Firefox 65.0.1
+  - Google Chrome 73.0.3683.86
   - Google Chrome 73.0.3683.75
 - webdriver 0.8.1, 0.9.0, 0.10.0
   - Firefox 65.0
