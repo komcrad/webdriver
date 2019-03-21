@@ -15,7 +15,9 @@
   [m]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
-  (. (. (. io.github.bonigarcia.wdm.ChromeDriverManager getInstance) version "2.45") setup)
+  (-> (. io.github.bonigarcia.wdm.WebDriverManager chromedriver)
+      (.version "73.0.3683.68")
+      (.setup))
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
     (. options addArguments (concat (if (:driver-args m) (:driver-args m) [])
@@ -37,7 +39,9 @@
   (. System setProperty "wdm.geckoDriverVersion" "0.24.0")
   (. System setProperty "webdriver.firefox.marionette" "true")
   (. System setProperty "webdriver.firefox.logfile" ".webdrivers/gecko.log")
-  (. (. io.github.bonigarcia.wdm.FirefoxDriverManager getInstance) setup)
+  (-> (. io.github.bonigarcia.wdm.WebDriverManager firefoxdriver)
+      (.version "0.24.0")
+      (.setup))
   (let [options (new org.openqa.selenium.firefox.FirefoxOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities firefox)
         profile (new org.openqa.selenium.firefox.FirefoxProfile)]
