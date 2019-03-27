@@ -39,4 +39,7 @@ jobs:
           key: v1-dependencies-{{ checksum "project.clj" }}
 
       # run tests!
-      - run: lein test
+      - run: 
+          name: Test
+          command: lein test
+          no_output_timeout: 30m
