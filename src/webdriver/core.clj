@@ -5,9 +5,11 @@
     [org.openqa.selenium WebElement]
     [org.openqa.selenium.support.ui WebDriverWait ExpectedConditions])
   (:require [webdriver.driver-manager :as dm]
+            [webdriver.screen :as scr]
             [komcrad-utils.wait :refer [wait-for]]
             [komcrad-utils.string :as ks]
             [komcrad-utils.io :as kio]
+            [me.raynes.conch.low-level :as sh]
             [clojure.java.io :as io]
             [clojure.data.json :as json]
             [hiccup.core :as h]))
@@ -21,6 +23,8 @@
    (. (. (. java.util.logging.LogManager getLogManager) getLogger "")
       setLevel (java.util.logging.Level/OFF))
    (cond
+     (:xvfb-port m)
+       (dm/headless-remote-driver m)
      (= :chrome m)
        (dm/create-chrome-driver {:driver-args ["--headless"]})
      (= :firefox m)
@@ -34,20 +38,26 @@
   ([driver-type args]
    (create-driver {:driver-type driver-type :driver-args args})))
 
-(defn download-dir
-  "returns the download directory path of driver as a string"
-  [driver]
-  (if (= org.openqa.selenium.firefox.FirefoxDriver (type driver))
-    (let [data-dir (.getCapability (.getCapabilities driver) "moz:profile")
+(defn firefox-download-dir [driver]
+  (try
+    (let [data-dir (.getCapability (.getCapabilities (:driver driver)) "moz:profile")
           prefs (slurp (str data-dir "/prefs.js"))]
       (second
         (ks/between-seq
           (first (filter #(clojure.string/includes? % "download.dir")
                          (re-seq #"user_pref\(.*\);" prefs))) "\"" "\"")))
-    (let [data-dir (.get (.getCapability (.getCapabilities driver) "chrome")
+    (catch Exception e nil)))
+
+(defn chrome-download-dir [driver]
+  (try
+    (let [data-dir (.get (.getCapability (.getCapabilities (:driver driver)) "chrome")
                          "userDataDir")]
       (get-in (json/read-str (slurp (str data-dir "/Default/Preferences")))
-              ["download" "default_directory"]))))
+              ["download" "default_directory"]))
+    (catch Exception e nil)))
+
+(defn download-dir [driver]
+  (or (firefox-download-dir driver) (chrome-download-dir driver)))
 
 (defn wait-for-download
   "waits for download to finish up to timeout (seconds).
@@ -66,17 +76,24 @@
         (list 'try (cons 'do body) '(catch Exception e (throw e)) '(finally (driver-quit driver))))))
 
 (defmacro with-webdriver
-  [[driver & {:keys [driver-type driver-args download-dir]
+  [[driver & {:keys [driver-type driver-args download-dir headless
+                     xvfb-port]
               :as params
               :or {driver-args []
                    driver-type :chrome
-                   download-dir nil}}] & body]
+                   download-dir nil
+                   xvfb-port nil
+                   headless false}}] & body]
   `(let [driver-type# ~driver-type
          driver-args# ~driver-args
          download-dir# ~download-dir
+         xvfb-port# ~xvfb-port
+         headless# ~headless
          ~driver (webdriver.core/create-driver {:driver-type driver-type#
                                                 :driver-args driver-args#
-                                                :download-dir download-dir#})]
+                                                :download-dir download-dir#
+                                                :xvfb-port xvfb-port#
+                                                :headless headless#})]
     (try
       ~@body
       (catch Exception e# (throw e#))
@@ -85,13 +102,22 @@
 (defmacro with-all-drivers
   "Same as with-driver but evaluates the forms in body agains all supported driver types.
    See examples in the unit tests"
-  [driver-args & body]
-  `(do (with-driver :chrome ~driver-args ~@body)
-       (with-driver :firefox ~driver-args ~@body)))
+  [[driver driver-args] & body]
+  `(do
+     (with-webdriver [~driver :driver-type :chrome
+                      :driver-args ~driver-args] ~@body)
+     (with-webdriver [~driver :driver-type :firefox
+                      :driver-args ~driver-args] ~@body)
+     (scr/with-screen [screen#]
+       (with-webdriver [~driver :driver-type :chrome :headless true
+                        :xvfb-port (:xvfb-port screen#)] ~@body))
+     (scr/with-screen [screen#]
+       (with-webdriver [~driver :driver-type :firefox :headless true
+                        :xvfb-port (:xvfb-port screen#)] ~@body))))
 
 (defn to
   "Navigates driver to the given url"
-  ([driver url] (. driver get url)))
+  ([driver url] (. (:driver driver) get url)))
 
 (defn to-localhost
   "Navigate driver to localhost, ignoring thrown exceptions"
@@ -101,7 +127,9 @@
 (defn driver-quit
   "calls quit on driver"
   ([driver]
-    (. driver quit)))
+    (. (:driver driver) quit)
+    (when (:remote-driver driver)
+      (sh/destroy (:remote-driver driver)))))
 
 (defn by
   "Returns a By object. Used for element queries"
@@ -128,7 +156,7 @@
   "finds elements that match lookup-type and lookup-string and returns a vector of those WebElements"
   [driver lookup-type lookup-string]
   (if lookup-type
-    (. driver findElements (by lookup-type lookup-string))))
+    (. (:driver driver) findElements (by lookup-type lookup-string))))
 
 (defn get-element
   "returns the first element matching lookup-type and lookup-string"
@@ -212,7 +240,7 @@
 (defn focused-element
   [driver]
   "Returns the current focused webelement"
-  (.activeElement (.switchTo driver)))
+  (.activeElement (.switchTo (:driver driver))))
 
 (defn send-keys
   "sends element the keys found in str s"
@@ -221,8 +249,8 @@
 
 (defn execute-script
     "Executes js in webdriver"
-      [^RemoteWebDriver webdriver js & js-args]
-        (.executeScript webdriver ^String js (into-array Object js-args)))
+      [driver js & js-args]
+      (.executeScript (:driver driver) ^String js (into-array Object js-args)))
 
 (defn unfocus
   "unfocuses all elements"
@@ -256,13 +284,13 @@
 (defn implicit-wait
   "sets driver's implicit wait timeout (in seconds)"
   [driver timeout]
-  (.implicitlyWait (.timeouts (.manage driver)) timeout (java.util.concurrent.TimeUnit/SECONDS)))
+  (.implicitlyWait (.timeouts (.manage (:driver driver))) timeout (java.util.concurrent.TimeUnit/SECONDS)))
 
 (defn wait-for-element
   "Explicitly waits for element to be clickable with a timeout of max-wait (seconds)
    and a poll-interval (milliseconds)"
   ([driver lookup-type lookup-string max-wait poll-interval]
-   (-> (new WebDriverWait driver max-wait)
+   (-> (new WebDriverWait (:driver driver) max-wait)
        (.pollingEvery poll-interval (TimeUnit/MILLISECONDS))
        (.until (. ExpectedConditions elementToBeClickable (by lookup-type lookup-string)))))
   ([driver lookup-type lookup-string max-wait]
@@ -273,7 +301,8 @@
 (defn wait-elm-dom
   "Waits for element to exist in dom with a timeout of max-wait (seconds)"
   ([driver lookup-type lookup-string max-wait]
-   (. (new org.openqa.selenium.support.ui.WebDriverWait driver max-wait) until
+   (. (new org.openqa.selenium.support.ui.WebDriverWait (:driver driver)
+           max-wait) until
       (. org.openqa.selenium.support.ui.ExpectedConditions presenceOfElementLocated (by lookup-type lookup-string))))
   ([driver lookup-type lookup-string]
    (wait-elm-dom driver lookup-type lookup-string 10)))
@@ -335,10 +364,12 @@
   [element s]
   (if (not (visible? element))
     (let [driver (.getWrappedDriver element)]
-        (execute-script driver "arguments[0].style.display = 'block';" element)
+        (execute-script {:driver driver}
+                        "arguments[0].style.display = 'block';" element)
         (wait-for #(visible? element) 1000 50)
         (send-keys element s)
-        (execute-script driver "arguments[0].style.display = 'none';" element))
+        (execute-script {:driver driver}
+                        "arguments[0].style.display = 'none';" element))
     (send-keys element s)))
 
 (defn set-element
@@ -490,8 +521,8 @@
 (defn switch-to-alert
   [driver]
   (wait-for
-    (fn [] (try (.alert (.switchTo driver)) true (catch Exception e false))) 2000 20)
-  (.alert (.switchTo driver)))
+    (fn [] (try (.alert (.switchTo (:driver driver))) true (catch Exception e false))) 2000 20)
+  (.alert (.switchTo (:driver driver))))
 
 (defn alert-text
   "returns the text contained in a js alert box"
@@ -519,29 +550,29 @@
 (defn iframe
   "switches to iframe by index or webelement (via calling (get-element lookup-type lookup-string))"
   ([driver n]
-   (.frame (.switchTo driver) n))
+   (.frame (.switchTo (:driver driver)) n))
 
   ([driver lookup-type lookup-string]
-   (.frame (.switchTo driver) (get-element driver lookup-type lookup-string))))
+   (.frame (.switchTo (:driver driver)) (get-element driver lookup-type lookup-string))))
 
 (defn iframe-parent
   "switches to parent iframe"
   [driver]
-  (.parentFrame (.switchTo driver)))
+  (.parentFrame (.switchTo (:driver driver))))
 
 (defn iframe-default
   "switches to default content (main body of the html that contains all the iframes)"
   [driver]
-  (.defaultContent (.switchTo driver)))
+  (.defaultContent (.switchTo (:driver driver))))
 
 (defn cookie
   "Creates or retrieves a cookie named cookie-name.
    Sets cookie's value to cookie-value if provided"
   ([driver cookie-name cookie-value]
-    (.addCookie (.manage driver) (org.openqa.selenium.Cookie. cookie-name
-                                                              cookie-value)))
+    (.addCookie (.manage (:driver driver))
+                (org.openqa.selenium.Cookie. cookie-name cookie-value)))
   ([driver cookie-name]
-    (.getValue (.getCookieNamed (.manage driver) cookie-name))))
+    (.getValue (.getCookieNamed (.manage (:driver driver)) cookie-name))))
 
 (defn screen-shot
   [driver output]

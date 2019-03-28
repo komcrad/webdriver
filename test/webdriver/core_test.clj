@@ -10,86 +10,69 @@
 (deftest ^:parallel create-driver-test
   (testing "create-driver"
     (let [driver (create-driver :chrome ["--headless"])]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
       (to driver (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
       (driver-quit driver))
     (let [driver (create-driver :chrome ["--headless"])]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
       (driver-quit driver))
     (let [driver (create-driver :chrome)]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
       (driver-quit driver))
     (let [driver (create-driver {:driver-type :chrome
                                  :driver-args ["--headless"]})]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
       (driver-quit driver))
     (let [driver (create-driver :firefox ["--headless"])]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
       (driver-quit driver))
     (let [driver (create-driver :firefox)]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
       (driver-quit driver)))
     (let [driver (create-driver {:driver-type :firefox
                                  :driver-args ["--headless"]})]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type driver))))
+      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
       (driver-quit driver))
   (testing "headless-insecure-certs"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://self-signed.badssl.com/")
       (is (= "self-signed.\nbadssl.com"
              (attr (get-element driver :xpath "//h1") :text))))))
 
-(deftest download-dir-test
+(deftest ^:parallel download-dir-test
   (testing "download-dir"
     (kio/with-tmps [dir (kio/tmp-folder)]
       (with-webdriver [driver :driver-type :chrome
                        :driver-args []
                        :download-dir (.getCanonicalPath dir)]
         (is (= (.getCanonicalPath dir) (download-dir driver)))
-        (to driver "https://www.thinkbroadband.com/download")
-        (Thread/sleep 1000)
-        (click (second
-                 (get-elements
-                   driver :xpath
-                   (str "//a[@href='http://ipv4.download."
-                        "thinkbroadband.com/5MB.zip']"))))
-        (let [df (wait-for-download driver "5MB.zip" 30)]
+        (to driver "http://www.ovh.net/files/")
+        (click driver :xpath "//a[@href='10Mb.dat']")
+        (let [df (wait-for-download driver "10Mb.dat" 60)]
           (is df)
-          (is (= "b3215c06647bc550406a9c8ccc378756"
+          (is (= "241cead4562ebf274f76f2e991750b9d"
                  (digest/md5 df)))
           (kio/delete-file df)))
       (with-webdriver [driver :driver-type :firefox
                        :driver-args ["--headless"]
                        :download-dir (.getCanonicalPath dir)]
         (is (= (.getCanonicalPath dir) (download-dir driver)))
-        (to driver "https://www.thinkbroadband.com/download")
-        (Thread/sleep 1000)
-        (click (second
-                 (get-elements
-                   driver :xpath
-                   (str "//a[@href='http://ipv4.download."
-                        "thinkbroadband.com/5MB.zip']"))))
-        (let [df (wait-for-download driver "5MB.zip" 30)]
+        (to driver "http://www.ovh.net/files/")
+        (click driver :xpath "//a[@href='10Mb.dat']")
+        (let [df (wait-for-download driver "10Mb.dat" 60)]
           (is df)
-          (is (= "b3215c06647bc550406a9c8ccc378756"
+          (is (= "241cead4562ebf274f76f2e991750b9d"
                  (digest/md5 df)))
           (kio/delete-file df))))))
 
 (deftest wait-for-download-test
   (testing "wait-for-download"
-    (with-all-drivers
-      []
-      (to driver "https://www.thinkbroadband.com/download")
-      (Thread/sleep 1000)
-      (click (second
-               (get-elements
-                 driver :xpath
-                 (str "//a[@href='http://ipv4.download."
-                      "thinkbroadband.com/5MB.zip']"))))
-      (let [df (wait-for-download driver "5MB.zip" 30)]
+    (with-all-drivers [driver []]
+      (to driver "http://www.ovh.net/files/")
+      (click driver :xpath "//a[@href='10Mb.dat']")
+      (let [df (wait-for-download driver "10Mb.dat" 60)]
         (is df)
-        (is (= "b3215c06647bc550406a9c8ccc378756"
+        (is (= "241cead4562ebf274f76f2e991750b9d"
                (digest/md5 df)))
         (kio/delete-file df)))))
 
@@ -111,10 +94,9 @@
 
 (deftest ^:parallel to-test
   (testing "to"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://google.com")
-      (is (= "Google Search" (get-element-value driver :name "btnK" :value))))))
+      (is (= "Google Search" (attr driver :name "btnK" :value))))))
 
 (deftest ^:parallel driver-quit-test
   (testing "driver-quit"
@@ -127,8 +109,7 @@
 
 (deftest ^:parallel get-elements-test
   (testing "get-elements"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= 1 (count (get-elements driver :name "p1"))))
       (is (= 2 (count (get-elements driver :id "p2"))))
@@ -140,22 +121,19 @@
 
 (deftest ^:parallel get-element-test
   (testing "get-element"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "paragraph 1" (.getText (get-element driver :name "p1")))))))
 
 (deftest ^:parallel get-visible-element-test
   (testing "get-visible-element"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "not really hidden button" (.getText (get-visible-element driver :id "hiddenbutton")))))))
 
-(deftest siblings-test
+(deftest ^:parallel siblings-test
   (testing "siblings"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= ["sib1" "sib2" "sib4" "sib5"]
              (vec (map #(attr % :id)
@@ -165,44 +143,39 @@
       (is (= "sib1" (attr (first (:preceding (siblings driver :id "sib2")))
                           :id))))))
 
-(deftest pre-sib-test
+(deftest ^:parallel pre-sib-test
   (testing "pre-sib"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "sib1" (attr (pre-sib driver :id "sib2") :id)))
       (is (nil? (pre-sib driver :id "sib1"))))))
 
-(deftest post-sib-test
+(deftest ^:parallel post-sib-test
   (testing "pre-sib"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "sib5" (attr (post-sib driver :id "sib4") :id)))
       (is (nil? (post-sib driver :id "sib5"))))))
 
-(deftest parent-test
+(deftest ^:parallel parent-test
   (testing "parent"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "siblings" (attr (parent driver :id "sib4") :id)))
       (is (= "siblings" (attr (parent driver :id "sib3") :id))))))
 
-(deftest select-elm-test
+(deftest ^:parallel select-elm-test
   (testing "select-elm"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= org.openqa.selenium.support.ui.Select
              (type (select-elm (get-element driver :id "select1")))))
       (is (thrown? org.openqa.selenium.support.ui.UnexpectedTagNameException 
                    (select-elm driver :id "input1"))))))
 
-(deftest select-elm-val-test
+(deftest ^:parallel select-elm-val-test
   (testing "select-elm-val"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (= "Option 1" (select-elm-val driver :id "select1")))
       (is (= "Option 1" (select-elm-val (get-element driver :id "select1"))))
@@ -214,16 +187,14 @@
 
 (deftest ^:parallel focused-element-test
   (testing "focused-element")
-  (with-all-drivers
-    ["--headless"]
+  (with-all-drivers [driver ["--headless"]]
     (to driver test-html-file-url)
     (click driver :id "btn1")
     (is (= "Button 1" (get-element-value (focused-element driver) :text)))))
 
 (deftest ^:parallel unfocus-test
     (testing "unfocus")
-      (with-all-drivers
-        ["--headless"]
+      (with-all-drivers [driver ["--headless"]]
         (to driver test-html-file-url)
         (click driver :id "btn1")
         (unfocus driver)
@@ -231,7 +202,7 @@
 
 (deftest ^:parallel scroll-into-view-test
   (testing "scroll-into-view"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (let [elm (get-element driver :id "btn1")]
         (scroll-into-view driver elm)
@@ -242,8 +213,7 @@
 
 (deftest ^:parallel clear-test
   (testing "clear"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-element driver :id "input1" "somestring")
       (clear driver (get-element driver :id "input1"))
@@ -254,8 +224,7 @@
 
 (deftest ^:parallel implicit-wait-test
   (testing "implicit-wait")
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "btn2")
       (is (thrown? NullPointerException (get-element-value driver :id "input2" :value)))
@@ -266,8 +235,7 @@
 
 (deftest ^:parallel wait-for-element-test
   (testing "wait-for-element"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "btn2")
       (is (= "potato") (get-element-value (wait-for-element driver :id "input2" 5) :value))
@@ -283,8 +251,7 @@
 
 (deftest ^:parallel wait-elm-dom-test
   (testing "wait-elm-dom"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "btn2")
       (is (= "potato" (attr (wait-elm-dom driver :id "input2") :value)))
@@ -293,10 +260,9 @@
       (is (= "are you still there?" (attr (wait-elm-dom driver :id "input7") :value)))
       (is (thrown? Exception (wait-elm-dom driver :id "notanelement" 0))))))
 
-(deftest enabled?-test
+(deftest ^:parallel enabled?-test
   (testing "enabled?"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (not (enabled? driver :id "disabledbtn")))
       (is (not (enabled? (get-element driver :id "disabledbtn"))))
@@ -305,8 +271,7 @@
 
 (deftest ^:parallel is-visible-test
   (testing "is-visible"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (is-visible driver :id "p2"))
       (is (not (is-visible driver :id "p4315151")))
@@ -317,8 +282,7 @@
 
 (deftest ^:parallel visible?-test
   (testing "visible?"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (visible? driver :id "p2"))
       (is (visible? (get-element driver :id "p2")))
@@ -329,8 +293,7 @@
 
 (deftest ^:parallel selected?-test
   (testing "visible?"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (not (selected? driver :id "input8")))
       (is (not (selected? (get-element driver :id "input8"))))
@@ -340,8 +303,7 @@
 
 (deftest ^:parallel input-text-test
   (testing "input-text"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (input-text driver (get-element driver :id "input1") "hello there" true)
       (is (= "hello there" (get-element-value driver :id "input1" :value)))
@@ -350,8 +312,7 @@
 
 (deftest ^:parallel set-file-input-test
   (testing "set-file-input"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (kio/with-tf [temp]
         (let [temp-path (.getCanonicalPath temp)
@@ -364,8 +325,7 @@
 
 (deftest ^:parallel set-element-test
   (testing "set-element"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-element driver :id "input1" "hello there")
       (is (= "hello there" (get-element-value driver :id "input1" :value)))
@@ -376,8 +336,7 @@
 
 (deftest ^:parallel set-elements-test
   (testing "set-elements"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-elements
         driver
@@ -392,10 +351,9 @@
       (is (= "input3val" (get-element-value driver :id "input3" :value)))
       (is (= "input4val" (get-element-value driver :id "input4" :value)))
       (is (= "input5val" (get-element-value driver :id "input5" :value))))))
-(deftest set-elms-test
+(deftest ^:parallel set-elms-test
   (testing "set-elms"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-elms driver :id [:input3 "hello" :input4 "there" :input5 "world"])
       (are [elm val] (= (attr (get-element driver :id (name elm)) :value) val)
@@ -403,8 +361,7 @@
 
 (deftest ^:parallel attr-test
   (testing "attr"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (let [elm (get-element driver :name "span1")]
         (is (= "span1" (attr elm :name)))
@@ -418,9 +375,9 @@
         (is (= "span 1" (attr elm :text)))
         (is (= "span 1" (attr driver :name "span1" :text)))))))
 
-(deftest options-test
+(deftest ^:parallel options-test
   (testing "options"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://google.com")
       (insert-html driver (get-element driver :id "viewport")
                    (html [:select {:id "options"} [:options [:option "option 1"]
@@ -430,8 +387,7 @@
 
 (deftest ^:parallel css-test
   (testing "css"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (let [elm (get-element driver :id "footer")]
         (is (= "100" (css elm "z-index")))
@@ -443,8 +399,7 @@
 
 (deftest ^:parallel get-element-value-test
   (testing "get-element-value"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-element driver :id "input1" "hello")
       (set-element driver :id "select1" "Option 3")
@@ -453,8 +408,7 @@
 
 (deftest ^:parallel click-test
   (testing "click"
-    (with-all-drivers
-      ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "btn4")
       (is (= "toothpick" (get-element-value driver :id "input6" :value)))
@@ -468,7 +422,7 @@
 
 (deftest ^:parallel wait-click-test
   (testing "wait-click"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (let [time1 (Float/parseFloat (nth (s/split
                                            (with-out-str
@@ -486,9 +440,9 @@
       (is (thrown? Exception (wait-click driver :id "input2" 1)))
       (is (nil? (wait-click driver :id "input2"))))))
 
-(deftest try-click-test
+(deftest ^:parallel try-click-test
   (testing "try-click"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "btn2")
       (is (try-click driver :id "input2" 10))
@@ -499,9 +453,9 @@
       (click driver :id "btn2")
       (is (try-click driver :id "input2")))))
 
-(deftest wait-q-test
+(deftest ^:parallel wait-q-test
   (testing "wait-q"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (nil? (wait-q driver :id "input2" 2)))
       (to driver test-html-file-url)
@@ -524,13 +478,13 @@
 
 (deftest ^:parallel alert-text-test
   (testing "alert-text"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (execute-script driver "alert('hello world')")
       (is (= "hello world" (alert-text driver))))))
 
 (deftest ^:parallel alert-accept-test
   (testing "alert-accept"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (execute-script driver
         (str "var node = document.createElement('span');"
@@ -545,7 +499,7 @@
 
 (deftest ^:parallel alert-dismiss-test
   (testing "alert-dismiss"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (execute-script driver
         (str "var node = document.createElement('span');"
@@ -570,7 +524,7 @@
 
 (deftest ^:parallel iframe-test
   (testing "iframe"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (is (thrown? java.lang.NullPointerException (get-element-value driver :id "iframeBChild" :text)))
       (iframe driver 1)
@@ -581,7 +535,7 @@
 
 (deftest ^:parallel iframe-parent-test
   (testing "iframe"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (iframe driver :id "iframeB")
       (iframe driver :id "iframeC")
@@ -591,7 +545,7 @@
 
 (deftest ^:parallel iframe-default-test
   (testing "iframe-default"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (iframe driver :id "iframeB")
       (iframe driver :id "iframeC")
@@ -601,16 +555,16 @@
 
 (deftest ^:parallel cookie-test
   (testing "cookie"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://google.com")
       (cookie driver "sillynonsensecookie" "I'm silly")
       (is (= "I'm silly" (cookie driver "sillynonsensecookie")))
       (cookie driver "sillynonsensecookie" "I'm silly nonsense")
       (is (= "I'm silly nonsense" (cookie driver "sillynonsensecookie"))))))
 
-(deftest insert-html-test
+(deftest ^:parallel insert-html-test
   (testing "insert-html"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://google.com")
       (insert-html driver (get-element driver :id "viewport")
                    (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
@@ -618,9 +572,9 @@
       (is (= "bobloblaw" (attr driver :xpath
                                "//div[@id='viewport']/h1[@id='bobloblaw']" :text))))))
 
-(deftest delete-elm-test
+(deftest ^:parallel delete-elm-test
   (testing "delete-elm"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver "https://google.com")
       (insert-html driver (get-element driver :id "viewport")
                    (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
@@ -633,9 +587,9 @@
       (delete-elm driver :id "bobloblaw")
       (is (nil? (get-element driver :id "bobloblaw"))))))
 
-(deftest wait-for-trans-test
+(deftest ^:parallel wait-for-trans-test
   (testing "wait-for-trans"
-    (with-all-drivers ["--headless"]
+    (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (click driver :id "transition")
       (is (not (= "200px" (css driver :id "transition" "width"))))

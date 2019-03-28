@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.11.0 2019-03-28]
+## Added
+- Truly headless support for linux. Allows firefox and chrome to run in xvfb. Everything is handled internally.
+- Ability to record drivers that run in xvfb.
+
 ## [0.10.0 2019-02-15]
 ## Added
 - better file download support
@@ -49,7 +54,7 @@ All notable changes to this project will be documented in this file. This change
 
 ## [0.5.3 - 2018-09-21]
 ### Changed
-- Updates version of chromedriver to 2.42 
+- Updates version of chromedriver to 2.42
 - Update circleci to use new webdriver docker image that contains updated web browsers
 
 ## [0.5.2 - 2018-09-04]
@@ -93,7 +98,7 @@ All notable changes to this project will be documented in this file. This change
 
 ## [0.2.4 - 2018-01-24]
 ### Added
-- Waits for alerts to exist for up to 2 seconds and waits 10ms for the alert to close 
+- Waits for alerts to exist for up to 2 seconds and waits 10ms for the alert to close
 - Downloads go to current directory (for firefox there is a whitelist of MIME types that will download without prompt)
 - Chrome will always ignore cert errors
 
