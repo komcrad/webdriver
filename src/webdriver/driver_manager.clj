@@ -200,11 +200,14 @@
     {:driver (new org.openqa.selenium.remote.RemoteWebDriver
                   (new java.net.URL (:url m)) cap)}))
 
+(defn set-size [driver width height]
+  (.setSize (.window (.manage (:driver driver)))
+            (new org.openqa.selenium.Dimension width height)))
+
 (defn headless-remote-driver [m]
   (let [m (merge {:driver-type :chrome} m)
         remote-driver (start-remote-driver m)
         driver (create-remote-driver (dissoc (merge m remote-driver)
                                              :driver-args))]
-    (.setSize (.window (.manage (:driver driver)))
-                         (new org.openqa.selenium.Dimension 1910 1070))
+    (set-size driver 1910 1070)
     (merge driver remote-driver)))

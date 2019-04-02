@@ -18,7 +18,8 @@
              (clojure.tools.namespace.repl/refresh)
              (use 'webdriver.core 'clojure.repl)
              (require '[webdriver.core :as c]
-                      '[webdriver.driver-manager :as dm]))}
+                      '[webdriver.driver-manager :as dm]
+                      '[webdriver.screen :as scr]))}
   :profiles {:dev
              {:dependencies [[digest "1.4.8"]]}}
   :plugins [[com.holychao/parallel-test "0.3.1"]

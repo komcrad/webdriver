@@ -237,10 +237,16 @@
          element
          (recur (drop 1 types)))))
 
+(defn current-url [driver]
+  (.getCurrentUrl (:driver driver)))
+
+(defn switch-to [driver]
+  (.switchTo (:driver driver)))
+
 (defn focused-element
   [driver]
   "Returns the current focused webelement"
-  (.activeElement (.switchTo (:driver driver))))
+  (.activeElement (switch-to driver)))
 
 (defn send-keys
   "sends element the keys found in str s"
@@ -521,8 +527,8 @@
 (defn switch-to-alert
   [driver]
   (wait-for
-    (fn [] (try (.alert (.switchTo (:driver driver))) true (catch Exception e false))) 2000 20)
-  (.alert (.switchTo (:driver driver))))
+    (fn [] (try (.alert (switch-to driver)) true (catch Exception e false))) 2000 20)
+  (.alert (switch-to driver)))
 
 (defn alert-text
   "returns the text contained in a js alert box"
@@ -550,20 +556,20 @@
 (defn iframe
   "switches to iframe by index or webelement (via calling (get-element lookup-type lookup-string))"
   ([driver n]
-   (.frame (.switchTo (:driver driver)) n))
+   (.frame (switch-to driver) n))
 
   ([driver lookup-type lookup-string]
-   (.frame (.switchTo (:driver driver)) (get-element driver lookup-type lookup-string))))
+   (.frame (switch-to driver) (get-element driver lookup-type lookup-string))))
 
 (defn iframe-parent
   "switches to parent iframe"
   [driver]
-  (.parentFrame (.switchTo (:driver driver))))
+  (.parentFrame (switch-to driver)))
 
 (defn iframe-default
   "switches to default content (main body of the html that contains all the iframes)"
   [driver]
-  (.defaultContent (.switchTo (:driver driver))))
+  (.defaultContent (switch-to driver)))
 
 (defn cookie
   "Creates or retrieves a cookie named cookie-name.
