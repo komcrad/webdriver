@@ -53,6 +53,13 @@
        (catch Exception e# (throw e#))
        (finally (webdriver.screen/stop-screen ~screen)))))
 
+(defn stream-to-null [is]
+  (future
+    (try
+      (while true
+        (.read is) nil)
+      (catch Exception e nil))))
+
 (defmacro with-recorded-screen
   [[screen & {:keys [vid-out]
               :as params
@@ -60,6 +67,7 @@
   `(let [~screen (webdriver.screen/start-screen)
          recorder# (webdriver.screen/start-recorder
                      (merge ~screen {:vid-out ~vid-out}))]
+     (webdriver.screen/stream-to-null (get-in recorder# [:xvfb-recorder :err]))
      (try
        ~@body
        (catch Exception e# (throw e#))
