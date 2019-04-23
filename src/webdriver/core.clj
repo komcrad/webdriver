@@ -68,6 +68,19 @@
                             (kio/file-list (download-dir driver)))))
             (* timeout 1000) 100))
 
+(defn driver-size
+  "sets the dimensions of the webdriver window to :width by :height
+   returns a map with keys :width and :height if given only a driver object"
+  ([driver m]
+   (.setSize (.window (.manage (:driver driver)))
+             (new org.openqa.selenium.Dimension (:width m) (:height m))))
+  ([driver]
+   (let [dim (-> (:driver driver) .manage .window .getSize)]
+     {:width (.getWidth dim) :height (.getHeight dim)})))
+
+(defn driver-maximize [driver]
+  (-> (:driver driver) .manage .window .maximize))
+
 (defmacro with-driver
   "creates a driver, executes the forms in body, and closes the driver.
    driver is closed in the case of an exception"
