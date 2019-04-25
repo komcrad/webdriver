@@ -11,6 +11,9 @@
 			   LoggingPreferences LogType)
 			 (java.util.logging Level Logger)))
 
+(defonce latest-chrome-version "74.0.3729.6")
+(defonce latest-gecko-version "0.24.0")
+
 (defn- mkdownload-dir [m]
   (let [dir (:download-dir m)]
     (if dir
@@ -27,8 +30,8 @@
       (s/includes? os "Windows") :windows)))
 
 (defn latest-driver-version [m]
-  (cond (= :firefox (:driver-type m)) "0.24.0"
-        (= :chrome (:driver-type m)) "73.0.3683.68"
+  (cond (= :firefox (:driver-type m)) latest-gecko-version
+        (= :chrome (:driver-type m)) latest-chrome-version
         :else (latest-driver-version (merge m {:driver-type :chrome}))))
 
 (defn driver-version [m]
@@ -153,7 +156,7 @@
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
   (-> (. io.github.bonigarcia.wdm.WebDriverManager chromedriver)
-      (.version "73.0.3683.68")
+      (.version latest-chrome-version)
       (.setup))
     {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
 
@@ -182,11 +185,11 @@
   "creates a firefoxdriver and passes in vector args as command line arguments"
   [m]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
-  (. System setProperty "wdm.geckoDriverVersion" "0.24.0")
+  (. System setProperty "wdm.geckoDriverVersion" latest-gecko-version)
   (. System setProperty "webdriver.firefox.marionette" "true")
   (. System setProperty "webdriver.firefox.logfile" ".webdrivers/gecko.log")
   (-> (. io.github.bonigarcia.wdm.WebDriverManager firefoxdriver)
-      (.version "0.24.0")
+      (.version latest-gecko-version)
       (.setup))
     {:driver (new org.openqa.selenium.firefox.FirefoxDriver (firefox-cap m))})
 

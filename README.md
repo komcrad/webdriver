@@ -90,8 +90,16 @@ core.clj contains functions to handle common browser tasks. You can either read 
   (.getVersion (.getCapabilities (:driver driver))) ; notice (:driver driver) instead of just driver
   (driver-quit driver)
   ```
+
+## Building Docker image
+```
+docker build --no-cache -t attackhelicopter/webdriver:0.9.0 -t attackhelicopter/webdriver:latest .
+```
 ## Tested versions of firefox and chrome
-- webdriver 0.11.0-SNAPSHOT
+- webdriver 0.12.0
+  - Firefox 66.0.1
+  - Google Chrome 74.0.3729.108
+- webdriver 0.11.0
   - Firefox 66.0
   - Google Chrome 73.0.3683.86
 - webdriver 0.10.0

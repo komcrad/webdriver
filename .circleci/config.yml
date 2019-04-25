@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: attackhelicopter/webdriver:0.8.0
+      - image: attackhelicopter/webdriver:0.9.0
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
