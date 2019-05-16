@@ -4,6 +4,7 @@
             [clojure.java.io :as io]
             [clojure.string :as s]
             [komcrad-utils.io :as kio]
+            [me.raynes.fs.compression :refer [gunzip untar]]
             [komcrad-utils.wait :refer [wait-for]]
             [clj-file-zip.core :as zip]
             [me.raynes.conch.low-level :as sh])
@@ -94,7 +95,15 @@
       (do
         (io/make-parents (io/file (str down-dir file-name)))
         (io/copy (:body @res) (io/file (str down-dir file-name)))
-        (zip/unzip (str down-dir file-name) down-dir)
+        (cond
+          (= (:driver-type m) :chrome)
+            (zip/unzip (str down-dir file-name) down-dir)
+          (= (:driver-type m) :firefox)
+            (do
+              (kio/with-tmps [tar (kio/tmp-file)]
+                (gunzip (str down-dir file-name)
+                        (.getCanonicalPath tar))
+                (untar tar down-dir))))
         (io/delete-file (io/file (str down-dir file-name)))
         (cond
           (= (:driver-type m) :chrome)
