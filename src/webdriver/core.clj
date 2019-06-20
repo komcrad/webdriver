@@ -24,15 +24,15 @@
       setLevel (java.util.logging.Level/OFF))
    (cond
      (:xvfb-port m)
-       (dm/headless-remote-driver m)
+       (dm/remote-driver m)
      (= :chrome m)
-       (dm/create-chrome-driver {:driver-args ["--headless"]})
+       (dm/remote-driver {:driver-type :chrome})
      (= :firefox m)
-       (dm/create-firefox-driver {:driver-args ["--headless"]})
+       (dm/remote-driver {:driver-type :firefox})
      (= :chrome (:driver-type m))
-       (dm/create-chrome-driver m)
+       (dm/remote-driver m)
      (= :firefox (:driver-type m))
-       (dm/create-firefox-driver m)
+       (dm/remote-driver m)
      :else (throw (Exception. (str "unsupported options passed "
                                    "to create-driver")))))
   ([driver-type args]
@@ -595,7 +595,8 @@
 
 (defn screen-shot
   [driver output]
-  (io/copy (.getScreenshotAs (cast org.openqa.selenium.TakesScreenshot driver)
+  (io/copy (.getScreenshotAs (cast org.openqa.selenium.TakesScreenshot
+                                   (:driver driver))
                              (org.openqa.selenium.OutputType/FILE))
            (io/file output)))
 

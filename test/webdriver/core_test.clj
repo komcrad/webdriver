@@ -9,30 +9,22 @@
 
 (deftest ^:parallel create-driver-test
   (testing "create-driver"
-    (let [driver (create-driver :chrome ["--headless"])]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
-      (to driver (str "file://" (.getCanonicalPath (io/file "test/resources/index.html"))))
-      (driver-quit driver))
-    (let [driver (create-driver :chrome ["--headless"])]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
-      (driver-quit driver))
-    (let [driver (create-driver :chrome)]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
-      (driver-quit driver))
     (let [driver (create-driver {:driver-type :chrome
                                  :driver-args ["--headless"]})]
-      (is (= "class org.openqa.selenium.chrome.ChromeDriver" (.toString (type (:driver driver)))))
+      (is (= :chrome (:driver-type driver)))
+      (to driver (str "file://" (.getCanonicalPath
+                                  (io/file "test/resources/index.html"))))
       (driver-quit driver))
-    (let [driver (create-driver :firefox ["--headless"])]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
+    (let [driver (create-driver {:driver-type :chrome})]
+      (is (= :chrome (:driver-type driver)))
       (driver-quit driver))
-    (let [driver (create-driver :firefox)]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
-      (driver-quit driver)))
     (let [driver (create-driver {:driver-type :firefox
                                  :driver-args ["--headless"]})]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
+      (is (= :firefox (:driver-type driver)))
       (driver-quit driver))
+    (let [driver (create-driver {:driver-type :firefox})]
+      (is (= :firefox (:driver-type driver)))
+      (driver-quit driver)))
   (testing "headless-insecure-certs"
     (with-all-drivers [driver ["--headless"]]
       (to driver "https://self-signed.badssl.com/")

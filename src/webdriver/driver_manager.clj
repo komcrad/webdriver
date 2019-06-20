@@ -159,16 +159,6 @@
                                     CAPABILITY) options)
     capabilities))
 
-(defn create-chrome-driver
-  "creates a chromedriver and passes in vector args as command line arguments"
-  [m]
-  (. System setProperty "wdm.targetPath" ".webdrivers/")
-  (. System setProperty "webdriver.chrome.silentOutput", "true")
-  (-> (. io.github.bonigarcia.wdm.WebDriverManager chromedriver)
-      (.version latest-chrome-version)
-      (.setup))
-    {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
-
 (defn- firefox-cap [m]
   (let [options (new org.openqa.selenium.firefox.FirefoxOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities firefox)
@@ -190,18 +180,6 @@
       (. org.openqa.selenium.firefox.FirefoxOptions FIREFOX_OPTIONS) options)
     capabilities))
 
-(defn create-firefox-driver
-  "creates a firefoxdriver and passes in vector args as command line arguments"
-  [m]
-  (. System setProperty "wdm.targetPath" ".webdrivers/")
-  (. System setProperty "wdm.geckoDriverVersion" latest-gecko-version)
-  (. System setProperty "webdriver.firefox.marionette" "true")
-  (. System setProperty "webdriver.firefox.logfile" ".webdrivers/gecko.log")
-  (-> (. io.github.bonigarcia.wdm.WebDriverManager firefoxdriver)
-      (.version latest-gecko-version)
-      (.setup))
-    {:driver (new org.openqa.selenium.firefox.FirefoxDriver (firefox-cap m))})
-
 (defn create-remote-driver
   [m]
   (.setLevel (Logger/getLogger "org.openqa.selenium") Level/OFF)
@@ -216,10 +194,9 @@
   (.setSize (.window (.manage (:driver driver)))
             (new org.openqa.selenium.Dimension width height)))
 
-(defn headless-remote-driver [m]
+(defn remote-driver [m]
   (let [m (merge {:driver-type :chrome} m)
         remote-driver (start-remote-driver m)
-        driver (create-remote-driver (dissoc (merge m remote-driver)
-                                             :driver-args))]
+        driver (create-remote-driver (merge m remote-driver))]
     (set-size driver 1910 1070)
-    (merge driver remote-driver)))
+    (merge driver remote-driver m)))
