@@ -5,7 +5,6 @@
             :url "https://www.gnu.org/licenses/lgpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.seleniumhq.selenium/selenium-java "3.141.59"]
-                 [io.github.bonigarcia/webdrivermanager "3.3.0"]
                  [org.slf4j/slf4j-simple "1.7.25"]
                  [me.raynes/fs "1.4.6"]
                  [komcrad-utils "0.9.0"]
