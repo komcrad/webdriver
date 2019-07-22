@@ -1,7 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.12.1 TDD]
+## [0.14.0 TDD]
+## Fixed
+- screen-shot now accepts the driver map that (create-driver produces)
+
+## [0.12.1]
 ## Fixed
 - download-driver function will now extract the tar.gz file instead of trying to unzip it
 

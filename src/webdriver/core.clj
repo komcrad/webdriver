@@ -594,10 +594,12 @@
     (.getValue (.getCookieNamed (.manage (:driver driver)) cookie-name))))
 
 (defn screen-shot
+  "Takes a screenshot of driver and writes a png image to output"
   [driver output]
-  (io/copy (.getScreenshotAs (cast org.openqa.selenium.TakesScreenshot driver)
-                             (org.openqa.selenium.OutputType/FILE))
-           (io/file output)))
+  (-> (cast org.openqa.selenium.TakesScreenshot (:driver driver))
+      (.getScreenshotAs (org.openqa.selenium.OutputType/FILE))
+      (io/copy (io/file output)))
+  (io/file output))
 
 (defn html
   "A wrapper around hiccup's html macro to avoid requiring yet another require"
