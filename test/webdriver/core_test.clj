@@ -562,6 +562,13 @@
       (cookie driver "sillynonsensecookie" "I'm silly nonsense")
       (is (= "I'm silly nonsense" (cookie driver "sillynonsensecookie"))))))
 
+(deftest screen-shot-test
+  (testing "that screenshot returns a File object"
+    (with-all-drivers [driver ["--headless"]]
+      (to driver "https://google.com")
+      (kio/with-tmps [tmp (screen-shot driver "/tmp/file")]
+        (is (.exists tmp))))))
+
 (deftest ^:parallel insert-html-test
   (testing "insert-html"
     (with-all-drivers [driver ["--headless"]]
