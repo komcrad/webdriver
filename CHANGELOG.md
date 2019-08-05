@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.14.0 TDD]
+## [0.14.0 2019-08-05]
+## Added
+- default driver is 76.0.3809.68
+
 ## Fixed
 - screen-shot now accepts the driver map that (create-driver produces)
 
