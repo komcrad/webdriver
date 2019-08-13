@@ -76,6 +76,21 @@
                (digest/md5 df)))
         (kio/delete-file df)))))
 
+(deftest with-driver-test
+  (testing "with-driver"
+    (with-driver :chrome ["--headless"]
+      (to driver "https://google.com")
+      (set-element driver :name "q" "silly memes")
+      (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
+      (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
+                                    "50 Hilarious Memes")))
+    (with-driver :firefox ["--headless"]
+      (to driver "https://google.com")
+      (set-element driver :name "q" "silly memes")
+      (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
+      (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
+                                    "50 Hilarious Memes")))))
+
 (deftest ^:parallel with-webdriver-test
   (testing "with-webdriver"
     (with-webdriver [d :driver-type :chrome
