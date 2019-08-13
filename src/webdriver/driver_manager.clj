@@ -146,7 +146,7 @@
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
     (. options addArguments (concat (if (:driver-args m) (:driver-args m) [])
-                                    ["--window-size=1920x1080"]))
+                                    ["--window-size=1920x1080" "--no-sandbox"]))
     (.setExperimentalOption options "prefs"
       (doto (new java.util.HashMap)
         (.put "profile.default_content_settings.popups" 0)
