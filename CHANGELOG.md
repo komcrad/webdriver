@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.14.1 2019-08-14]
+## Fixed
+- added --no-sandbox to chrome options which fixes issues with running chromium in docker
+
 ## [0.14.0 2019-08-05]
 ## Added
 - default driver is 76.0.3809.68
