@@ -95,6 +95,15 @@ core.clj contains functions to handle common browser tasks. You can either read 
 ```
 docker build --no-cache -t attackhelicopter/webdriver:0.11.0 -t attackhelicopter/webdriver:latest .
 ```
+
+## Running unit tests in docker image locally
+```
+docker run -v /dev/shm/:/dev/shm -it attackhelicopter/webdriver:latest /bin/bash
+git clone https://github.com/komcrad/webdriver.git
+cd webdriver
+lein test
+```
+
 ## Tested versions of firefox and chrome
 - webdriver 0.14.0
   - Firefox 68.0.1
