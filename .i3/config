@@ -158,7 +158,7 @@ bar {
 bindsym $mod+Shift+f exec nautilus --no-desktop
 bindsym  $mod+Shift+m exec amixer -D pulse sset Master 5%+
 bindsym  $mod+Shift+n exec amixer -D pulse sset Master 5%-
-bindsym  $mod+Shift+h exec i3-lock -i .bg.darkArch.png
+bindsym  $mod+Shift+h exec i3lock -i .bg.darkArch.png
 bindsym $mod+Shift+g exec gedit
 exec --no-startup-id nm-applet
 exec feh --bg-fill .bg.darkArch.png
