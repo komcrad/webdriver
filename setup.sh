@@ -3,7 +3,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
 install-software() {
-  software="vim bash-completion git i3-wm i3status i3lock feh rxvt-unicode jdk8-openjdk dmenu brave xclip chromium"
+  software="vim bash-completion git i3-wm i3status i3lock feh rxvt-unicode jdk8-openjdk dmenu brave xclip chromium htop base-devel xdotool"
   sudo pacman -Syu --noconfirm $software
   sudo cp clipboard /usr/lib/urxvt/perl/
 }
@@ -29,11 +29,26 @@ vim-plugins () {
   cd $DIR
 }
 
+touch-pad () {
+sudo mkdir -p /etc/X11/xorg.conf.d && sudo tee <<'EOF' /etc/X11/xorg.conf.d/90-touchpad.conf 1> /dev/null
+Section "InputClass"
+	Identifier "touchpad"
+	MatchIsTouchpad "on"
+	Driver "libinput"
+	Option "Tapping" "on"
+    Option "NaturalScrolling" "on"
+    Option "ScrollMethod" "twofinger"
+EndSection
+
+EOF
+}
+
 main () {
   install-software
   place-configs
   setup-clojure
   vim-plugins
+  touch-pad
 }
 
 main
