@@ -16,8 +16,9 @@ setup-clojure () {
   curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein > lein
   chmod +x lein
   sudo mv lein /usr/local/bin/
-  yes | sudo lein downgrade 2.8.1
+  yes | sudo lein downgrade 2.9.1
   lein -version
+  cp profiles.clj ~/.lein/
 }
 
 vim-plugins () {
