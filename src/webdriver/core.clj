@@ -2,7 +2,7 @@
   (:gen-class)
   (:import
     [java.util.concurrent TimeUnit] [org.openqa.selenium.remote RemoteWebDriver]
-    [org.openqa.selenium WebElement]
+    [org.openqa.selenium WebElement WebDriverException]
     [org.openqa.selenium.support.ui WebDriverWait ExpectedConditions])
   (:require [webdriver.driver-manager :as dm]
             [webdriver.screen :as scr]
@@ -509,7 +509,7 @@
   ([driver lookup-type lookup-string timeout]
    (wait-for
     #(try (click driver lookup-type lookup-string) true
-          (catch Exception e false))
+          (catch WebDriverException e false))
     (* 1000 timeout) 500))
   ([driver lookup-type lookup-string]
    (try-click driver lookup-type lookup-string 10)))
