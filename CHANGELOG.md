@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.14.3 2019-11-4]
+## Added
+- default driver is 78.0.3904.70
+
+## [0.14.2 2019-10-29]
+## Fixed
+- no longer catch all exceptions in try-click, it was breaking thread interrupts
+
 ## [0.14.1 2019-08-14]
 ## Fixed
 - added --no-sandbox to chrome options which fixes issues with running chromium in docker

@@ -1,6 +1,6 @@
-(defproject webdriver "0.14.2"
+(defproject webdriver "0.14.3"
   :description "A clojure selenium webdriver wrapper"
-  :url "https://github.com/komcrad/webdriver"
+  :url "https://github.com/wsbu/webdriver"
   :license {:name "LGPL-3.0"
             :url "https://www.gnu.org/licenses/lgpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
