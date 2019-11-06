@@ -1,4 +1,4 @@
-(defproject webdriver "0.14.3"
+(defproject net.redlion/clj-webdriver "0.14.3"
   :description "A clojure selenium webdriver wrapper"
   :url "https://github.com/wsbu/webdriver"
   :license {:name "LGPL-3.0"
@@ -24,4 +24,8 @@
   :profiles {:dev
              {:dependencies [[digest "1.4.8"]]}}
   :plugins [[com.holychao/parallel-test "0.3.1"]
-            [komcrad/lein-autoreload "0.2.0"]])
+            [komcrad/lein-autoreload "0.2.0"]]
+  :deploy-repositories [["releases" {:url "https://mvn.redlion.net/repository/maven-releases"
+                                     :sign-releases false}]
+                        ["snapshots" {:url "https://mvn.redlion.net/repository/maven-snapshots"
+                                      :sign-releases false}]])

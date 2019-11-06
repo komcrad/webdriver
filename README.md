@@ -3,8 +3,6 @@
 A simple (features as needs arise) Clojure wrapper of Selenium Webdriver
 
 ## Usage
-[![Clojars Project](https://img.shields.io/clojars/v/webdriver.svg)](https://clojars.org/webdriver)
-[![CircleCI](https://circleci.com/gh/komcrad/webdriver/tree/master.svg?style=svg&circle-token=a5fcd5b0389dd482ec5e55fb3c6bab0715377cd9)](https://circleci.com/gh/komcrad/webdriver/tree/master)
 
 If you want to use the truly headless/recording environment, you'll need to be running a linux host with xvfb and ffmpeg installed.  
 `sudo apt-get install ffmpeg xvfb`  
@@ -91,15 +89,10 @@ core.clj contains functions to handle common browser tasks. You can either read 
   (driver-quit driver)
   ```
 
-## Building Docker image
-```
-docker build --no-cache -t attackhelicopter/webdriver:0.12.0 -t attackhelicopter/webdriver:latest .
-```
-
 ## Running unit tests in docker image locally
 ```
-docker run -v /dev/shm/:/dev/shm -it attackhelicopter/webdriver:latest /bin/bash
-git clone https://github.com/komcrad/webdriver.git
+docker run -v /dev/shm/:/dev/shm -it wsbu/webdriver:latest /bin/bash
+git clone https://github.com/wsbu/webdriver.git
 cd webdriver
 lein test
 ```
