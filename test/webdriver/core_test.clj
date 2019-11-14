@@ -83,13 +83,13 @@
       (set-element driver :name "q" "silly memes")
       (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
       (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
-                                    "50 Hilarious Memes")))
+                                    "jabbafan14 › silly-memes")))
     (with-driver :firefox ["--headless"]
       (to driver "https://google.com")
       (set-element driver :name "q" "silly memes")
       (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
       (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
-                                    "50 Hilarious Memes")))))
+                                    "jabbafan14 › silly-memes")))))
 
 (deftest ^:parallel with-webdriver-test
   (testing "with-webdriver"
@@ -99,13 +99,13 @@
       (set-element d :name "q" "silly memes")
       (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
       (is (s/includes? (attr (first (get-elements d :className "r")) :text)
-                                    "50 Hilarious Memes")))
+                                    "jabbafan14 › silly-memes")))
       (with-webdriver [d :driver-type :firefox :driver-args ["--headless"]]
         (to d "https://google.com")
         (set-element d :name "q" "silly memes")
         (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
         (is (s/includes? (attr (first (get-elements d :className "r")) :text)
-                                      "50 Hilarious Memes")))))
+                                      "jabbafan14 › silly-memes")))))
 
 (deftest ^:parallel to-test
   (testing "to"

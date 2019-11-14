@@ -12,8 +12,8 @@
 			   LoggingPreferences LogType)
 			 (java.util.logging Level Logger)))
 
-(defonce latest-chrome-version "76.0.3809.68")
-(defonce latest-gecko-version "0.24.0")
+(defonce latest-chrome-version "78.0.3904.70")
+(defonce latest-gecko-version "0.26.0")
 
 (defn- mkdownload-dir [m]
   (let [dir (:download-dir m)]
