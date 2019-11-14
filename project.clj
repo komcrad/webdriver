@@ -14,14 +14,5 @@
                  [http-kit "2.3.0"]
                  [clj-file-zip "0.1.0"]
                  [me.raynes/conch "0.8.0"]]
-  :repl-options
-  {:init (do (use '[clojure.tools.namespace.repl :only (refresh)])
-             (clojure.tools.namespace.repl/refresh)
-             (use 'webdriver.core 'clojure.repl)
-             (require '[webdriver.core :as c]
-                      '[webdriver.driver-manager :as dm]
-                      '[webdriver.screen :as scr]))}
   :profiles {:dev
-             {:dependencies [[digest "1.4.8"]]}}
-  :plugins [[com.holychao/parallel-test "0.3.1"]
-            [komcrad/lein-autoreload "0.2.0"]])
+             {:dependencies [[digest "1.4.8"]]}})
