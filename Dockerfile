@@ -60,6 +60,7 @@ RUN PHANTOMJS_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
 #      && sudo chmod +x /usr/local/bin/chromedriver \
 #      && chromedriver --version
 
+RUN sudo apt-get install chromium-common
 RUN sudo apt-get install chromium
       
 # install libgconf-2-4 manually since chrome no longer pulls it in automatically
