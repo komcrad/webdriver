@@ -17,7 +17,8 @@ RUN printf '#!/bin/sh\nXvfb :99 -screen 0 1280x1024x24 &\nexec "$@"\n' > /tmp/en
   && chmod +x /tmp/entrypoint \
         && mv /tmp/entrypoint /docker-entrypoint.sh
 
-WORKDIR /tmp/
+WORKDIR /tmp
+ENV LEIN_ROOT=1
 LABEL com.circleci.preserve-entrypoint=true
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["bin/sh"]
