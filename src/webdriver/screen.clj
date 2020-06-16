@@ -1,4 +1,5 @@
 (ns webdriver.screen
+  (:gen-class)
   (:require [org.httpkit.client :as http]
             [clojure.java.io :as io]
             [clojure.string :as s]

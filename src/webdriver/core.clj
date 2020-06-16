@@ -1,4 +1,5 @@
 (ns webdriver.core
+  (:gen-class)
   (:import
     [java.util.concurrent TimeUnit] [org.openqa.selenium.remote RemoteWebDriver]
     [org.openqa.selenium WebElement]
