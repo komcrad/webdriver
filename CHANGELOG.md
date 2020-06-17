@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.17.0 2020-06-16]
+## Added
+- arch linux build for ci
+- Upgraded default chromedriver to 83.0.4103.106
+- Upgraded to clojure 1.10.1
+
 ## [0.14.1 2019-08-14]
 ## Fixed
 - added --no-sandbox to chrome options which fixes issues with running chromium in docker
