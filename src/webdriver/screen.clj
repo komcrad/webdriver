@@ -9,21 +9,21 @@
             [me.raynes.conch.low-level :as sh]
             [me.raynes.conch :refer [programs with-programs let-programs]])
   (:import (org.openqa.selenium.logging
-			   LoggingPreferences LogType)
-			 (java.util.logging Level Logger)))
+            LoggingPreferences LogType)
+           (java.util.logging Level Logger)))
 
 (defn screen-port-available? [n]
   (with-programs [ps]
     (empty?
-      (filter #(s/includes? % (str "Xvfb :" n))
-              (filter #(s/includes? % "Xvfb")
-                      (s/split (ps "aux") #"\n"))))))
+     (filter #(s/includes? % (str "Xvfb :" n))
+             (filter #(s/includes? % "Xvfb")
+                     (s/split (ps "aux") #"\n"))))))
 
 (defn screen-port []
- (let [port (+ 50 (rand-int 999999950))]
-   (if (screen-port-available? port)
-     port
-     (screen-port))))
+  (let [port (+ 50 (rand-int 999999950))]
+    (if (screen-port-available? port)
+      port
+      (screen-port))))
 
 (defn start-screen []
   (let [port (screen-port)
@@ -66,11 +66,11 @@
               :or {vid-out "/tmp/webdriver.mp4"}}] & body]
   `(let [~screen (webdriver.screen/start-screen)
          recorder# (webdriver.screen/start-recorder
-                     (merge ~screen {:vid-out ~vid-out}))]
+                    (merge ~screen {:vid-out ~vid-out}))]
      (webdriver.screen/stream-to-null (get-in recorder# [:xvfb-recorder :err]))
      (try
        ~@body
        (catch Exception e# (throw e#))
-       (finally 
+       (finally
          (webdriver.screen/stop-recorder recorder#)
          (webdriver.screen/stop-screen ~screen)))))

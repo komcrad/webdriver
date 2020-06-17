@@ -9,10 +9,10 @@
             [clj-file-zip.core :as zip]
             [me.raynes.conch.low-level :as sh])
   (:import (org.openqa.selenium.logging
-			   LoggingPreferences LogType)
-			 (java.util.logging Level Logger)))
+            LoggingPreferences LogType)
+           (java.util.logging Level Logger)))
 
-(defonce latest-chrome-version "81.0.4044.69")
+(defonce latest-chrome-version "83.0.4103.39")
 (defonce latest-gecko-version "0.26.0")
 
 (defn- mkdownload-dir [m]
@@ -97,13 +97,13 @@
         (io/copy (:body @res) (io/file (str down-dir file-name)))
         (cond
           (= (:driver-type m) :chrome)
-            (zip/unzip (str down-dir file-name) down-dir)
+          (zip/unzip (str down-dir file-name) down-dir)
           (= (:driver-type m) :firefox)
-            (do
-              (kio/with-tmps [tar (kio/tmp-file)]
-                (gunzip (str down-dir file-name)
-                        (.getCanonicalPath tar))
-                (untar tar down-dir))))
+          (do
+            (kio/with-tmps [tar (kio/tmp-file)]
+              (gunzip (str down-dir file-name)
+                      (.getCanonicalPath tar))
+              (untar tar down-dir))))
         (io/delete-file (io/file (str down-dir file-name)))
         (cond
           (= (:driver-type m) :chrome)
@@ -148,9 +148,9 @@
     (. options addArguments (concat (if (:driver-args m) (:driver-args m) [])
                                     ["--window-size=1920x1080" "--no-sandbox"]))
     (.setExperimentalOption options "prefs"
-      (doto (new java.util.HashMap)
-        (.put "profile.default_content_settings.popups" 0)
-        (.put "download.default_directory" (mkdownload-dir m))))
+                            (doto (new java.util.HashMap)
+                              (.put "profile.default_content_settings.popups" 0)
+                              (.put "download.default_directory" (mkdownload-dir m))))
     (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
                                     ACCEPT_SSL_CERTS) true)
     (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
@@ -167,7 +167,7 @@
   (-> (. io.github.bonigarcia.wdm.WebDriverManager chromedriver)
       (.version latest-chrome-version)
       (.setup))
-    {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
+  {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
 
 (defn- firefox-cap [m]
   (let [options (new org.openqa.selenium.firefox.FirefoxOptions)
@@ -186,8 +186,8 @@
     (. options addArguments (if (:driver-args m) (:driver-args m) []))
     (. options setProfile profile)
     (.setCapability
-      capabilities
-      (. org.openqa.selenium.firefox.FirefoxOptions FIREFOX_OPTIONS) options)
+     capabilities
+     (. org.openqa.selenium.firefox.FirefoxOptions FIREFOX_OPTIONS) options)
     capabilities))
 
 (defn create-firefox-driver
@@ -200,7 +200,7 @@
   (-> (. io.github.bonigarcia.wdm.WebDriverManager firefoxdriver)
       (.version latest-gecko-version)
       (.setup))
-    {:driver (new org.openqa.selenium.firefox.FirefoxDriver (firefox-cap m))})
+  {:driver (new org.openqa.selenium.firefox.FirefoxDriver (firefox-cap m))})
 
 (defn create-remote-driver
   [m]

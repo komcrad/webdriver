@@ -21,15 +21,15 @@ Create a driver object
 
 Chrome:
 - `(def driver (create-driver {:driver-type :chrome}))`
-- `(def driver (create-driver :chrome []))` (old method)
 
 Firefox:
 - `(def driver (create-driver {:driver-type :firefox}))`
-- `(def driver (create-driver :firefox []))` (old method)
+
+Specific driver versions can also be passed to :chrome or :firefox versions
+- `(def driver (create-driver {:driver-type :chrome :version "81.0.4044.138"}))`
 
 Headless:
 - `(def driver (create-driver {:driver-type :chrome :driver-args ["--headless"]}))`
-- `(def driver (create-driver :chrome ["--headless"]))` (old method)
 
 Xvfb (Linux only with xvfb installed)
 
@@ -105,9 +105,9 @@ lein test
 ```
 
 ## Tested versions of firefox and chrome
-- webdriver 0.16.0
+- webdriver 0.17.0
   - Firefox 76.0.1
-  - Chromium 81.0.4044.92
+  - Chromium 83.0.4103.106
 - webdriver 0.15.0
   - Firefox 70.0.1
   - Chromium 78.0.3904.97
