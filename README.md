@@ -105,9 +105,9 @@ lein test
 ```
 
 ## Tested versions of firefox and chrome
-- webdriver 0.16.0
+- webdriver 0.17.0
   - Firefox 76.0.1
-  - Chromium 81.0.4044.92
+  - Chromium 83.0.4103.106
 - webdriver 0.15.0
   - Firefox 70.0.1
   - Chromium 78.0.3904.97
