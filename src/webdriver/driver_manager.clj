@@ -145,19 +145,18 @@
 (defn- chrome-cap [m]
   (let [options (new org.openqa.selenium.chrome.ChromeOptions)
         capabilities (. org.openqa.selenium.remote.DesiredCapabilities chrome)]
-    (comment
-      (. options addArguments (concat (if (:driver-args m) (:driver-args m) [])
-                                      ["--window-size=1920x1080" "--no-sandbox"]))
-      (.setExperimentalOption options "prefs"
-                              (doto (new java.util.HashMap)
-                                (.put "profile.default_content_settings.popups" 0)
-                                (.put "download.default_directory" (mkdownload-dir m))))
-      (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
-                                      ACCEPT_SSL_CERTS) true)
-      (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
-                                      ACCEPT_INSECURE_CERTS) true)
-      (.setCapability capabilities (. org.openqa.selenium.chrome.ChromeOptions
-                                      CAPABILITY) options))
+    (. options addArguments (concat (if (:driver-args m) (:driver-args m) [])
+                                    ["--window-size=1920x1080" "--no-sandbox"]))
+    (.setExperimentalOption options "prefs"
+                            (doto (new java.util.HashMap)
+                              (.put "profile.default_content_settings.popups" 0)
+                              (.put "download.default_directory" (mkdownload-dir m))))
+    (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
+                                    ACCEPT_SSL_CERTS) true)
+    (.setCapability capabilities (. org.openqa.selenium.remote.CapabilityType
+                                    ACCEPT_INSECURE_CERTS) true)
+    (.setCapability capabilities (. org.openqa.selenium.chrome.ChromeOptions
+                                    CAPABILITY) options)
     capabilities))
 
 (defn create-chrome-driver
@@ -169,9 +168,6 @@
       (.version latest-chrome-version)
       (.setup))
   {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
-
-(comment
-  (chrome-cap {:driver-args []}))
 
 (defn- firefox-cap [m]
   (let [options (new org.openqa.selenium.firefox.FirefoxOptions)
