@@ -29,10 +29,10 @@
     (let [driver (create-driver :firefox)]
       (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
       (driver-quit driver)))
-    (let [driver (create-driver {:driver-type :firefox
-                                 :driver-args ["--headless"]})]
-      (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
-      (driver-quit driver))
+  (let [driver (create-driver {:driver-type :firefox
+                               :driver-args ["--headless"]})]
+    (is (= "class org.openqa.selenium.firefox.FirefoxDriver" (.toString (type (:driver driver)))))
+    (driver-quit driver))
   (testing "headless-insecure-certs"
     (with-all-drivers [driver ["--headless"]]
       (to driver "https://self-signed.badssl.com/")
@@ -79,33 +79,21 @@
 (deftest with-driver-test
   (testing "with-driver"
     (with-driver :chrome ["--headless"]
-      (to driver "https://google.com")
-      (set-element driver :name "q" "silly memes")
-      (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
-      (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
-                                    "jabbafan14 › silly-memes")))
+      (to driver test-html-file-url)
+      (is (= "im fake" (attr driver :name "span1" :fakeattribute))))
     (with-driver :firefox ["--headless"]
-      (to driver "https://google.com")
-      (set-element driver :name "q" "silly memes")
-      (click (wait-for-element driver :xpath "//input[@value = 'Google Search'][1]"))
-      (is (s/includes? (attr (first (get-elements driver :className "r")) :text)
-                                    "jabbafan14 › silly-memes")))))
+      (to driver test-html-file-url)
+      (is (= "im fake" (attr driver :name "span1" :fakeattribute))))))
 
 (deftest ^:parallel with-webdriver-test
   (testing "with-webdriver"
     (with-webdriver [d :driver-type :chrome
                      :driver-args ["--headless"]]
-      (to d "https://google.com")
-      (set-element d :name "q" "silly memes")
-      (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
-      (is (s/includes? (attr (first (get-elements d :className "r")) :text)
-                                    "jabbafan14 › silly-memes")))
-      (with-webdriver [d :driver-type :firefox :driver-args ["--headless"]]
-        (to d "https://google.com")
-        (set-element d :name "q" "silly memes")
-        (click (wait-for-element d :xpath "//input[@value = 'Google Search'][1]"))
-        (is (s/includes? (attr (first (get-elements d :className "r")) :text)
-                                      "jabbafan14 › silly-memes")))))
+      (to d test-html-file-url)
+      (is (= "im fake" (attr d :name "span1" :fakeattribute))))
+    (with-webdriver [d :driver-type :firefox :driver-args ["--headless"]]
+      (to d test-html-file-url)
+      (is (= "im fake" (attr d :name "span1" :fakeattribute))))))
 
 (deftest ^:parallel to-test
   (testing "to"
@@ -185,7 +173,7 @@
       (to driver test-html-file-url)
       (is (= org.openqa.selenium.support.ui.Select
              (type (select-elm (get-element driver :id "select1")))))
-      (is (thrown? org.openqa.selenium.support.ui.UnexpectedTagNameException 
+      (is (thrown? org.openqa.selenium.support.ui.UnexpectedTagNameException
                    (select-elm driver :id "input1"))))))
 
 (deftest ^:parallel select-elm-val-test
@@ -208,12 +196,12 @@
     (is (= "Button 1" (get-element-value (focused-element driver) :text)))))
 
 (deftest ^:parallel unfocus-test
-    (testing "unfocus")
-      (with-all-drivers [driver ["--headless"]]
-        (to driver test-html-file-url)
-        (click driver :id "btn1")
-        (unfocus driver)
-        (is (not (= "Button 1" (get-element-value (focused-element driver) :text))))))
+  (testing "unfocus")
+  (with-all-drivers [driver ["--headless"]]
+    (to driver test-html-file-url)
+    (click driver :id "btn1")
+    (unfocus driver)
+    (is (not (= "Button 1" (get-element-value (focused-element driver) :text))))))
 
 (deftest ^:parallel scroll-into-view-test
   (testing "scroll-into-view"
@@ -239,14 +227,14 @@
 
 (deftest ^:parallel implicit-wait-test
   (testing "implicit-wait")
-    (with-all-drivers [driver ["--headless"]]
-      (to driver test-html-file-url)
-      (click driver :id "btn2")
-      (is (thrown? NullPointerException (get-element-value driver :id "input2" :value)))
-      (to driver test-html-file-url)
-      (implicit-wait driver 10)
-      (click driver :id "btn2")
-      (is (= "potato" (get-element-value driver :id "input2" :value)))))
+  (with-all-drivers [driver ["--headless"]]
+    (to driver test-html-file-url)
+    (click driver :id "btn2")
+    (is (thrown? NullPointerException (get-element-value driver :id "input2" :value)))
+    (to driver test-html-file-url)
+    (implicit-wait driver 10)
+    (click driver :id "btn2")
+    (is (= "potato" (get-element-value driver :id "input2" :value)))))
 
 (deftest ^:parallel wait-for-element-test
   (testing "wait-for-element"
@@ -332,11 +320,11 @@
       (kio/with-tf [temp]
         (let [temp-path (.getCanonicalPath temp)
               temp-name (.getName temp)]
-        (set-file-input (get-element driver :id "file1") temp-path)
-        (set-file-input (get-element driver :id "file2") temp-path)
-        (is (s/includes? (attr driver :id "file1" :value) temp-name))
-        (is (s/includes? (attr driver :id "file2" :value) temp-name))
-        (is (s/includes? (attr driver :id "file2" :style) "none;")))))))
+          (set-file-input (get-element driver :id "file1") temp-path)
+          (set-file-input (get-element driver :id "file2") temp-path)
+          (is (s/includes? (attr driver :id "file1" :value) temp-name))
+          (is (s/includes? (attr driver :id "file2" :value) temp-name))
+          (is (s/includes? (attr driver :id "file2" :style) "none;")))))))
 
 (deftest ^:parallel set-element-test
   (testing "set-element"
@@ -354,9 +342,9 @@
     (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (set-elements
-        driver
-        [(get-element driver :id "input1") (get-element driver :id "select1")]
-        ["hello there world" "Option 2"])
+       driver
+       [(get-element driver :id "input1") (get-element driver :id "select1")]
+       ["hello there world" "Option 2"])
       (is (= "hello there world" (get-element-value driver :id "input1" :value)))
       (is (= "Option 2" (get-element-value driver :id "select1" :value)))
       (set-elements driver :id
@@ -372,7 +360,7 @@
       (to driver test-html-file-url)
       (set-elms driver :id [:input3 "hello" :input4 "there" :input5 "world"])
       (are [elm val] (= (attr (get-element driver :id (name elm)) :value) val)
-           :input3 "hello" :input4 "there" :input5 "world"))))
+        :input3 "hello" :input4 "there" :input5 "world"))))
 
 (deftest ^:parallel attr-test
   (testing "attr"
@@ -440,13 +428,13 @@
     (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (let [time1 (Float/parseFloat (nth (s/split
-                                           (with-out-str
-                                             (time (try (wait-click driver :name "fakelement")
-                                                        (catch Exception e)))) #" ") 2))
+                                          (with-out-str
+                                            (time (try (wait-click driver :name "fakelement")
+                                                       (catch Exception e)))) #" ") 2))
             time2 (Float/parseFloat (nth (s/split
-                                           (with-out-str
-                                             (time (try (wait-click driver :name "fakelement" 5)
-                                                        (catch Exception e)))) #" ") 2))]
+                                          (with-out-str
+                                            (time (try (wait-click driver :name "fakelement" 5)
+                                                       (catch Exception e)))) #" ") 2))]
         (is (< 10000 time1))
         (is (> 11000 time1))
         (is (<  5000 time2))
@@ -502,12 +490,12 @@
     (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (execute-script driver
-        (str "var node = document.createElement('span');"
-             "var textnode = document.createTextNode(alert('hi'));"
-             "node.appendChild(textnode);"
-             "node.setAttribute('id', 'alert-result');"
-             "document.getElementsByTagName('body')[0]"
-             ".appendChild(node);"))
+                      (str "var node = document.createElement('span');"
+                           "var textnode = document.createTextNode(alert('hi'));"
+                           "node.appendChild(textnode);"
+                           "node.setAttribute('id', 'alert-result');"
+                           "document.getElementsByTagName('body')[0]"
+                           ".appendChild(node);"))
       (is (= "hi" (alert-text driver)))
       (alert-accept driver)
       (is (= "undefined" (attr driver :id "alert-result" :text))))))
@@ -517,22 +505,22 @@
     (with-all-drivers [driver ["--headless"]]
       (to driver test-html-file-url)
       (execute-script driver
-        (str "var node = document.createElement('span');"
-             "var textnode = document.createTextNode(confirm('hi'));"
-             "node.appendChild(textnode);"
-             "node.setAttribute('id', 'alert-result');"
-             "document.getElementsByTagName('body')[0]"
-             ".appendChild(node);"))
+                      (str "var node = document.createElement('span');"
+                           "var textnode = document.createTextNode(confirm('hi'));"
+                           "node.appendChild(textnode);"
+                           "node.setAttribute('id', 'alert-result');"
+                           "document.getElementsByTagName('body')[0]"
+                           ".appendChild(node);"))
       (is (= "hi" (alert-text driver)))
       (alert-accept driver)
       (is (= "true" (attr driver :id "alert-result" :text)))
       (execute-script driver
-        (str "var node = document.createElement('span');"
-             "var textnode = document.createTextNode(confirm('hey'));"
-             "node.appendChild(textnode);"
-             "node.setAttribute('id', 'alert-result2');"
-             "document.getElementsByTagName('body')[0]"
-             ".appendChild(node);"))
+                      (str "var node = document.createElement('span');"
+                           "var textnode = document.createTextNode(confirm('hey'));"
+                           "node.appendChild(textnode);"
+                           "node.setAttribute('id', 'alert-result2');"
+                           "document.getElementsByTagName('body')[0]"
+                           ".appendChild(node);"))
       (is (= "hey" (alert-text driver)))
       (alert-dismiss driver)
       (is (= "false" (attr driver :id "alert-result2" :text))))))
@@ -587,23 +575,23 @@
 (deftest ^:parallel insert-html-test
   (testing "insert-html"
     (with-all-drivers [driver ["--headless"]]
-      (to driver "https://google.com")
-      (insert-html driver (get-element driver :id "viewport")
+      (to driver test-html-file-url)
+      (insert-html driver (get-element driver :id "main")
                    (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
       (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
       (is (= "bobloblaw" (attr driver :xpath
-                               "//div[@id='viewport']/h1[@id='bobloblaw']" :text))))))
+                               "//div[@id='main']/h1[@id='bobloblaw']" :text))))))
 
 (deftest ^:parallel delete-elm-test
   (testing "delete-elm"
     (with-all-drivers [driver ["--headless"]]
-      (to driver "https://google.com")
-      (insert-html driver (get-element driver :id "viewport")
+      (to driver test-html-file-url)
+      (insert-html driver (get-element driver :id "main")
                    (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
       (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
       (delete-elm driver (get-element driver :id "bobloblaw"))
       (is (nil? (get-element driver :id "bobloblaw")))
-      (insert-html driver (get-element driver :id "viewport")
+      (insert-html driver (get-element driver :id "main")
                    (html [:h1 {:id "bobloblaw"} "bobloblaw"]))
       (is (= "bobloblaw" (attr driver :id "bobloblaw" :text)))
       (delete-elm driver :id "bobloblaw")
@@ -618,6 +606,6 @@
       (Thread/sleep 1000)
       (let [now (System/currentTimeMillis)]
         (wait-for-trans driver (get-element driver :id "transition")
-                                 #(click driver :id "transition"))
+                        #(click driver :id "transition"))
         (is (= "300px" (css driver :id "transition" "width")))
         (is (> 2000 (- (System/currentTimeMillis) now)))))))
