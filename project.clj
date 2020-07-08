@@ -13,7 +13,7 @@
                  [hiccup "1.0.5"]
                  [http-kit "2.3.0"]
                  [clj-file-zip "0.1.0"]
-                 [com.google.guava/guava "29.0-jre"]
-                 [me.raynes/conch "0.8.0"]]
+                 [me.raynes/conch "0.8.0"]
+                 [com.google.guava/guava "29.0-jre"]]
   :profiles {:dev
              {:dependencies [[digest "1.4.8"]]}})
