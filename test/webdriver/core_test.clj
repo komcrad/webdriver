@@ -381,12 +381,13 @@
 (deftest ^:parallel options-test
   (testing "options"
     (with-all-drivers [driver ["--headless"]]
-      (to driver "https://google.com")
-      (insert-html driver (get-element driver :id "viewport")
-                   (html [:select {:id "options"} [:options [:option "option 1"]
-                                                   [:option "option 2"]]]))
+      (to-localhost driver)
+      (insert-html driver (get-element driver :tagName "body")
+                   (html [:select {:id "options"}
+                          [:options [:option "option 1"]
+                           [:option "option 2"]]]))
       (is (= ["option 1" "option 2"] (options driver :id "options")))
-      (is (nil? (options driver :id "viewport"))))))
+      (is (nil? (options driver :tagName "body"))))))
 
 (deftest ^:parallel css-test
   (testing "css"

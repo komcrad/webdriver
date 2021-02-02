@@ -165,7 +165,7 @@
   (. System setProperty "wdm.targetPath" ".webdrivers/")
   (. System setProperty "webdriver.chrome.silentOutput", "true")
   (-> (. io.github.bonigarcia.wdm.WebDriverManager chromedriver)
-      (.version latest-chrome-version)
+      (.version (or (:version m) latest-chrome-version))
       (.setup))
   {:driver (new org.openqa.selenium.chrome.ChromeDriver (chrome-cap m))})
 
@@ -194,11 +194,11 @@
   "creates a firefoxdriver and passes in vector args as command line arguments"
   [m]
   (. System setProperty "wdm.targetPath" ".webdrivers/")
-  (. System setProperty "wdm.geckoDriverVersion" latest-gecko-version)
+  (. System setProperty "wdm.geckoDriverVersion" (or (:version m) latest-gecko-version))
   (. System setProperty "webdriver.firefox.marionette" "true")
   (. System setProperty "webdriver.firefox.logfile" ".webdrivers/gecko.log")
   (-> (. io.github.bonigarcia.wdm.WebDriverManager firefoxdriver)
-      (.version latest-gecko-version)
+      (.version (or (:version m) latest-gecko-version))
       (.setup))
   {:driver (new org.openqa.selenium.firefox.FirefoxDriver (firefox-cap m))})
 
